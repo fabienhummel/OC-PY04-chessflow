@@ -1,0 +1,88 @@
+@startuml
+title ChessFlow — Diagramme de cas d'utilisation
+
+left to right direction
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+skinparam actor {
+  BackgroundColor #E8F1FA
+  BorderColor #24527A
+  FontColor #17324D
+}
+skinparam usecase {
+  BackgroundColor #F8FAFC
+  BorderColor #3D5A73
+  FontColor #1F2937
+}
+
+actor "Organisateur du tournoi" as Organizer
+
+rectangle "ChessFlow" {
+  package "Registre des joueurs" {
+    usecase "Gérer le registre\ndes joueurs" as UC_ManagePlayers
+    usecase "Ajouter un joueur" as UC_AddPlayer
+    usecase "Consulter les joueurs\npar ordre alphabétique" as UC_ListPlayers
+  }
+
+  package "Gestion du tournoi" {
+    usecase "Gérer un tournoi" as UC_ManageTournament
+    usecase "Créer un tournoi" as UC_CreateTournament
+    usecase "Sélectionner un nombre pair\nde participants" as UC_SelectPlayers
+    usecase "Démarrer ou reprendre\nun tournoi" as UC_StartResume
+    usecase "Démarrer une ronde" as UC_StartRound
+    usecase "Générer les appariements" as UC_Pairings
+    usecase "Saisir les résultats\ndes matchs" as UC_Results
+    usecase "Clôturer une ronde" as UC_CloseRound
+    usecase "Clôturer le tournoi" as UC_CloseTournament
+  }
+
+  package "Consultation et rapports" {
+    usecase "Consulter les rapports" as UC_Reports
+    usecase "Consulter les tournois" as UC_ListTournaments
+    usecase "Consulter les informations\nd'un tournoi" as UC_TournamentDetails
+    usecase "Consulter ses participants" as UC_TournamentPlayers
+    usecase "Consulter ses rondes\net ses matchs" as UC_RoundsMatches
+  }
+
+  usecase "Sauvegarder automatiquement\nl'état validé" as UC_Save
+}
+
+Organizer --> UC_ManagePlayers
+Organizer --> UC_ManageTournament
+Organizer --> UC_Reports
+
+UC_ManagePlayers .> UC_AddPlayer : <<include>>
+UC_ManagePlayers .> UC_ListPlayers : <<include>>
+UC_ManageTournament .> UC_CreateTournament : <<include>>
+UC_ManageTournament .> UC_SelectPlayers : <<include>>
+UC_ManageTournament .> UC_StartResume : <<include>>
+UC_ManageTournament .> UC_StartRound : <<include>>
+UC_ManageTournament .> UC_Results : <<include>>
+UC_ManageTournament .> UC_CloseRound : <<include>>
+UC_ManageTournament .> UC_CloseTournament : <<include>>
+UC_Reports .> UC_ListTournaments : <<include>>
+UC_Reports .> UC_TournamentDetails : <<include>>
+UC_Reports .> UC_TournamentPlayers : <<include>>
+UC_Reports .> UC_RoundsMatches : <<include>>
+
+UC_StartRound .> UC_Pairings : <<include>>
+UC_CreateTournament .> UC_Save : <<include>>
+UC_SelectPlayers .> UC_Save : <<include>>
+UC_Results .> UC_Save : <<include>>
+UC_CloseRound .> UC_Save : <<include>>
+UC_CloseTournament .> UC_Save : <<include>>
+
+note bottom of UC_SelectPlayers
+  Aucun joueur exempt : le démarrage
+  exige un nombre pair de participants.
+end note
+
+note bottom of UC_Pairings
+  Première ronde : aléatoire.
+  Rondes suivantes : score décroissant,
+  ex æquo aléatoires et revanche évitée
+  autant que possible.
+end note
+@enduml

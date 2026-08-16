@@ -1,0 +1,99 @@
+@startuml
+title ChessFlow — Diagramme de classes métier
+
+top to bottom direction
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #F8FAFC
+  BorderColor #34536D
+  FontColor #172B3A
+  HeaderBackgroundColor #DCEAF5
+}
+
+class Player {
+  - national_id: str
+  - last_name: str
+  - first_name: str
+  - birth_date: date
+  + validate_national_id()
+  + to_dict()
+  + from_dict(data)
+}
+
+class Tournament {
+  - name: str
+  - location: str
+  - start_date: date
+  - end_date: date
+  - number_of_rounds: int = 4
+  - description: str
+  - participants: list[Player]
+  - player_scores: dict[str, float]
+  - rounds: list[Round]
+  - status: str
+  + add_participant(player)
+  + can_start()
+  + start_round()
+  + update_scores()
+  + is_finished()
+  + to_dict()
+  + from_dict(data)
+}
+
+class Round {
+  - name: str
+  - start_datetime: datetime
+  - end_datetime: datetime | None
+  - matches: list[Match]
+  + add_match(match)
+  + is_complete()
+  + close()
+  + to_dict()
+  + from_dict(data)
+}
+
+class Match {
+  - player_one: Player
+  - player_two: Player
+  - score_one: float | None
+  - score_two: float | None
+  + set_result(score_one, score_two)
+  + has_result()
+  + involves(player)
+  + to_dict()
+  + from_dict(data)
+}
+
+Tournament "0..*" o-- "2..* {even}" Player : participants
+Tournament "1" *-- "0..*" Round : rounds
+Round "1" *-- "1..*" Match : matches
+Match "0..*" --> "1" Player : player_one
+Match "0..*" --> "1" Player : player_two
+
+note right of Player
+  Le joueur existe indépendamment
+  de tout tournoi. Son identifiant
+  national est unique dans le registre.
+end note
+
+note right of Tournament
+  Les scores sont propres au tournoi
+  et indexés par l'identifiant national.
+  Une ronde est créée progressivement.
+end note
+
+note bottom of Match
+  Résultats autorisés :
+  1–0, 0–1 ou 0,5–0,5.
+end note
+
+legend bottom left
+  o--  agrégation : le joueur reste indépendant
+  *--  composition : le cycle de vie dépend du parent
+  -->  association vers un joueur
+  Aucune classe abstraite ni relation d'héritage
+endlegend
+@enduml
