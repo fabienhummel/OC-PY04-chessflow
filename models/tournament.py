@@ -1,4 +1,6 @@
 class Tournament:
+    """Represent a chess tournament."""
+
     def __init__(
         self,
         name,
@@ -8,6 +10,7 @@ class Tournament:
         description="",
         number_of_rounds=4,
     ):
+        """Initialize a tournament."""
         self.name = name
         self.location = location
         self.start_date = start_date
@@ -19,14 +22,18 @@ class Tournament:
         self.rounds = []
 
     def add_player(self, player):
+        """Add a player to the tournament."""
         pass
 
     def add_round(self, round_):
+        """Add a round to the tournament."""
         pass
 
     def to_dict(self):
+        """Convert the tournament to a dictionary."""
         pass
 
     @classmethod
     def from_dict(cls, data):
+        """Create a tournament from a dictionary."""
         pass
