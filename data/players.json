@@ -1,1 +1,20 @@
-[]
+[
+    {
+        "last_name": "Hummel",
+        "first_name": "Fabien",
+        "birth_date": "1976-06-29",
+        "national_id": "FH12345"
+    },
+    {
+        "last_name": "Dupont",
+        "first_name": "Alice",
+        "birth_date": "1992-05-14",
+        "national_id": "AD23456"
+    },
+    {
+        "last_name": "Martin",
+        "first_name": "Paul",
+        "birth_date": "1988-09-21",
+        "national_id": "PM34567"
+    }
+]
