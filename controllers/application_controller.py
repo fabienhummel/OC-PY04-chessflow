@@ -37,11 +37,46 @@ class ApplicationController:
                 print("Invalid choice.")
 
     def manage_players(self):
-        """Create and display players."""
-        player_data = self.player_view.get_player_data()
-        self.player_controller.create_player(*player_data)
-        players = self.player_controller.list_players()
-        self.player_view.display_players(players)
+        """Manage players."""
+        while True:
+            self.player_view.display_menu()
+            choice = self.player_view.get_choice()
+
+            if choice == "1":
+                player_data = self.player_view.get_player_data()
+                self.player_controller.create_player(*player_data)
+            elif choice == "2":
+                players = self.player_controller.list_players()
+                self.player_view.display_players(players)
+            elif choice == "3":
+                national_id = self.player_view.get_national_id()
+                player = self.player_controller.find_player(national_id)
+                self.player_view.display_player(player)
+            elif choice == "4":
+                national_id = self.player_view.get_national_id()
+                player = self.player_controller.find_player(national_id)
+
+                if player is None:
+                    self.player_view.display_player(player)
+                    continue
+
+                player_data = self.player_view.get_updated_player_data(player)
+                self.player_controller.update_player(player, *player_data)
+                self.player_view.display_player(player)
+            elif choice == "5":
+                national_id = self.player_view.get_national_id()
+                player = self.player_controller.find_player(national_id)
+
+                if player is None:
+                    self.player_view.display_player(player)
+                    continue
+
+                self.player_controller.delete_player(player)
+                print("Player deleted.")
+            elif choice == "6":
+                break
+            else:
+                print("Invalid choice.")
 
     def manage_tournaments(self):
         """Create and display a tournament."""
