@@ -7,12 +7,19 @@ class TournamentView:
         print("1. Create a tournament")
         print("2. List saved tournaments")
         print("3. Load a tournament")
-        print("4. Display current tournament")
-        print("5. Add a player")
-        print("6. Create next round")
-        print("7. Enter current round results")
-        print("8. Close current round")
-        print("9. Back")
+        print("4. Back")
+
+    def display_loaded_menu(self):
+        """Display the loaded tournament menu."""
+        print("\n=== Loaded tournament ===")
+        print("1. Display tournament")
+        print("2. List tournament players")
+        print("3. Add a player")
+        print("4. List rounds")
+        print("5. Create next round")
+        print("6. Enter current round results")
+        print("7. Close current round")
+        print("8. Back")
 
     def get_choice(self):
         """Get the user choice."""
