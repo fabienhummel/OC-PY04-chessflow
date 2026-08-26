@@ -13,13 +13,26 @@ class TournamentView:
         """Display the loaded tournament menu."""
         print("\n=== Loaded tournament ===")
         print("1. Display tournament")
-        print("2. List tournament players")
-        print("3. Add a player")
-        print("4. List rounds")
-        print("5. Create next round")
-        print("6. Enter or edit round results")
-        print("7. Close current round")
-        print("8. Back")
+        print("2. Manage tournament players")
+        print("3. Manage rounds")
+        print("4. Display ranking")
+        print("5. Back")
+
+    def display_players_menu(self):
+        """Display the tournament players menu."""
+        print("\n=== Manage tournament players ===")
+        print("1. List tournament players")
+        print("2. Add a player")
+        print("3. Back")
+
+    def display_rounds_menu(self):
+        """Display the tournament rounds menu."""
+        print("\n=== Manage rounds ===")
+        print("1. List rounds")
+        print("2. Create next round")
+        print("3. Enter or edit round results")
+        print("4. Close current round")
+        print("5. Back")
 
     def get_choice(self):
         """Get the user choice."""
@@ -82,6 +95,19 @@ class TournamentView:
     def get_player_national_id(self):
         """Get a player national ID."""
         return input("Player national chess ID: ")
+
+    def display_round_choices(self, rounds):
+        """Display rounds that can be selected."""
+        print("\n=== Select a round ===")
+
+        for index, round_ in enumerate(rounds, start=1):
+            print(f"{index}. {round_.name}")
+
+        print("0. Back")
+
+    def get_round_choice(self):
+        """Get the round to edit."""
+        return input("Choose a round: ")
 
     def display_matches(self, round_):
         """Display the matches of a round."""

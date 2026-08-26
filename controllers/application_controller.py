@@ -128,11 +128,48 @@ class ApplicationController:
 
             if choice == "1":
                 self.tournament_view.display_tournament(self.current_tournament)
-
             elif choice == "2":
-                self.player_view.display_players(self.current_tournament.players)
-
+                self.manage_tournament_players()
             elif choice == "3":
+                self.manage_rounds()
+            elif choice == "4":
+                ranking = self.tournament_controller.get_ranking(
+                    self.current_tournament
+                )
+                ranking_with_scores = [
+                    (
+                        player,
+                        self.tournament_controller.get_player_score(
+                            self.current_tournament,
+                            player,
+                        ),
+                    )
+                    for player in ranking
+                ]
+                self.report_view.display_ranking(ranking_with_scores)
+            elif choice == "5":
+                break
+            else:
+                print("Invalid choice.")
+
+    def manage_tournament_players(self):
+        """Manage players in the loaded tournament."""
+        while True:
+            self.tournament_view.display_players_menu()
+            choice = self.tournament_view.get_choice()
+
+            if choice == "1":
+                self.player_view.display_players(self.current_tournament.players)
+            elif choice == "2":
+                if not self.tournament_controller.can_add_player(
+                    self.current_tournament
+                ):
+                    print(
+                        "Players cannot be added after the first round "
+                        "has started."
+                    )
+                    continue
+
                 national_id = self.tournament_view.get_player_national_id()
                 player = self.player_controller.find_player(national_id)
 
@@ -145,15 +182,34 @@ class ApplicationController:
                     player,
                 )
                 print("Player added to tournament.")
+            elif choice == "3":
+                break
+            else:
+                print("Invalid choice.")
 
-            elif choice == "4":
+    def manage_rounds(self):
+        """Manage rounds in the loaded tournament."""
+        while True:
+            self.tournament_view.display_rounds_menu()
+            choice = self.tournament_view.get_choice()
+
+            if choice == "1":
                 self.report_view.display_rounds(self.current_tournament.rounds)
 
-            elif choice == "5":
+            elif choice == "2":
                 if self.current_tournament.current_round >= (
                     self.current_tournament.number_of_rounds
                 ):
                     print("All rounds have already been created.")
+                    continue
+
+                if not self.tournament_controller.can_create_next_round(
+                    self.current_tournament
+                ):
+                    print(
+                        "The current round must be closed before "
+                        "creating the next round."
+                    )
                     continue
 
                 players = self.current_tournament.players
@@ -175,12 +231,25 @@ class ApplicationController:
                 )
                 print(f"{round_.name} created.")
 
-            elif choice == "6":
+            elif choice == "3":
                 if not self.current_tournament.rounds:
                     print("No round available.")
                     continue
 
-                round_ = self.current_tournament.rounds[-1]
+                self.tournament_view.display_round_choices(
+                    self.current_tournament.rounds
+                )
+                round_choice = self.tournament_view.get_round_choice()
+
+                if round_choice == "0":
+                    continue
+
+                try:
+                    round_index = int(round_choice) - 1
+                    round_ = self.current_tournament.rounds[round_index]
+                except (ValueError, IndexError):
+                    print("Invalid round.")
+                    continue
 
                 while True:
                     self.tournament_view.display_matches(round_)
@@ -207,19 +276,30 @@ class ApplicationController:
                     )
                     print("Result saved.")
 
-            elif choice == "7":
+            elif choice == "4":
                 if not self.current_tournament.rounds:
                     print("No round available.")
                     continue
 
-                round_ = self.current_tournament.rounds[-1]
+                round_ = self.tournament_controller.get_open_round(
+                    self.current_tournament
+                )
+
+                if round_ is None:
+                    print("No open round available.")
+                    continue
+
+                if not self.tournament_controller.is_round_complete(round_):
+                    print("Enter all match results before closing the round.")
+                    continue
+
                 self.tournament_controller.close_round(
                     self.current_tournament,
                     round_,
                 )
                 print(f"{round_.name} closed.")
 
-            elif choice == "8":
+            elif choice == "5":
                 break
 
             else:

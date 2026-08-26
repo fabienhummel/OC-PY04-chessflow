@@ -64,3 +64,18 @@ class ReportView:
                     f"{match.player_two.last_name} {match.player_two.first_name} "
                     f"({match.score_two})"
                 )
+
+    def display_ranking(self, ranking):
+        """Display a tournament ranking."""
+        print("\n=== Tournament ranking ===")
+
+        if not ranking:
+            print("No players registered.")
+            return
+
+        for position, item in enumerate(ranking, start=1):
+            player, score = item
+            print(
+                f"{position}. {player.last_name} {player.first_name} "
+                f"- {score} points"
+            )
