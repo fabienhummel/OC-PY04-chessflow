@@ -182,7 +182,20 @@ class ApplicationController:
 
                 round_ = self.current_tournament.rounds[-1]
 
-                for match in round_.matches:
+                while True:
+                    self.tournament_view.display_matches(round_)
+                    match_choice = self.tournament_view.get_match_choice()
+
+                    if match_choice == "0":
+                        break
+
+                    try:
+                        match_index = int(match_choice) - 1
+                        match = round_.matches[match_index]
+                    except (ValueError, IndexError):
+                        print("Invalid match.")
+                        continue
+
                     score_one, score_two = self.tournament_view.get_match_result(
                         match
                     )
@@ -192,6 +205,7 @@ class ApplicationController:
                         score_one,
                         score_two,
                     )
+                    print("Result saved.")
 
             elif choice == "7":
                 if not self.current_tournament.rounds:
