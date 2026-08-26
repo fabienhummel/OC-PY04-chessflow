@@ -7,7 +7,7 @@ class MainMenuView:
         print("1. Manage players")
         print("2. Manage tournaments")
         print("3. Reports")
-        print("4. Quit")
+        print("0. Quit")
 
     def get_choice(self):
         """Get the user choice."""

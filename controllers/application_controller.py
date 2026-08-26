@@ -31,7 +31,7 @@ class ApplicationController:
                 self.manage_tournaments()
             elif choice == "3":
                 self.display_reports()
-            elif choice == "4":
+            elif choice == "0":
                 print("Goodbye.")
                 break
             else:
@@ -74,7 +74,7 @@ class ApplicationController:
 
                 self.player_controller.delete_player(player)
                 print("Player deleted.")
-            elif choice == "6":
+            elif choice == "0":
                 break
             else:
                 print("Invalid choice.")
@@ -114,7 +114,7 @@ class ApplicationController:
                 )
                 self.manage_loaded_tournament()
 
-            elif choice == "4":
+            elif choice == "0":
                 break
 
             else:
@@ -147,7 +147,7 @@ class ApplicationController:
                     for player in ranking
                 ]
                 self.report_view.display_ranking(ranking_with_scores)
-            elif choice == "5":
+            elif choice == "0":
                 break
             else:
                 print("Invalid choice.")
@@ -182,7 +182,7 @@ class ApplicationController:
                     player,
                 )
                 print("Player added to tournament.")
-            elif choice == "3":
+            elif choice == "0":
                 break
             else:
                 print("Invalid choice.")
@@ -299,7 +299,7 @@ class ApplicationController:
                 )
                 print(f"{round_.name} closed.")
 
-            elif choice == "5":
+            elif choice == "0":
                 break
 
             else:
@@ -372,7 +372,7 @@ class ApplicationController:
                 ]
                 self.report_view.display_ranking(ranking_with_scores)
 
-            elif choice == "7":
+            elif choice == "0":
                 break
 
             else:
