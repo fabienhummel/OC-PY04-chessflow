@@ -1,6 +1,23 @@
 class TournamentView:
     """Display tournament-related information."""
 
+    def display_menu(self):
+        """Display the tournament menu."""
+        print("\n=== Manage tournaments ===")
+        print("1. Create a tournament")
+        print("2. List saved tournaments")
+        print("3. Load a tournament")
+        print("4. Display current tournament")
+        print("5. Add a player")
+        print("6. Create next round")
+        print("7. Enter current round results")
+        print("8. Close current round")
+        print("9. Back")
+
+    def get_choice(self):
+        """Get the user choice."""
+        return input("Choose an option: ")
+
     def get_tournament_data(self):
         """Get tournament data from the user."""
         print("\n=== Create a tournament ===")
@@ -27,6 +44,10 @@ class TournamentView:
 
     def display_tournament(self, tournament):
         """Display a tournament."""
+        if tournament is None:
+            print("No tournament loaded.")
+            return
+
         print("\n=== Tournament ===")
         print(f"Name: {tournament.name}")
         print(f"Location: {tournament.location}")
@@ -35,6 +56,25 @@ class TournamentView:
         print(f"Description: {tournament.description}")
         print(f"Rounds: {tournament.current_round}/{tournament.number_of_rounds}")
         print(f"Players: {len(tournament.players)}")
+
+    def display_tournament_files(self, filenames):
+        """Display saved tournament files."""
+        print("\n=== Saved tournaments ===")
+
+        if not filenames:
+            print("No saved tournaments.")
+            return
+
+        for filename in filenames:
+            print(filename)
+
+    def get_filename(self):
+        """Get a tournament filename."""
+        return input("Tournament filename: ")
+
+    def get_player_national_id(self):
+        """Get a player national ID."""
+        return input("Player national chess ID: ")
 
     def get_match_result(self, match):
         """Get a match result from the user."""
