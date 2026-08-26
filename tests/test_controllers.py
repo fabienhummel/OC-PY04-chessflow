@@ -152,6 +152,74 @@ class TournamentControllerTestCase(unittest.TestCase):
         self.assertIs(ranking[0], self.player_one)
         self.assertEqual(set(ranking[1:]), {self.player_two, player_three})
 
+    def test_have_played_together(self):
+        """Detect players who have already played together."""
+        round_one = Round("Round 1")
+        round_one.add_match(self.match)
+        self.tournament.add_round(round_one)
+
+        result = self.controller.have_played_together(
+            self.tournament,
+            self.player_one,
+            self.player_two,
+        )
+
+        self.assertTrue(result)
+
+    @patch("controllers.tournament_controller.save_tournament")
+    def test_create_matches_avoids_previous_opponent(
+        self,
+        mock_save_tournament,
+    ):
+        """Avoid a previous opponent when another player is available."""
+        player_three = Player(
+            "Bernard",
+            "Claire",
+            "1992-07-01",
+            "EF24680",
+        )
+        player_four = Player(
+            "Petit",
+            "Lucas",
+            "1994-04-20",
+            "GH13579",
+        )
+        self.tournament.players = [
+            self.player_one,
+            self.player_two,
+            player_three,
+            player_four,
+        ]
+
+        round_one = Round("Round 1")
+        round_one.add_match(Match(self.player_one, self.player_two))
+        self.tournament.add_round(round_one)
+        self.tournament.current_round = 2
+
+        round_two = Round("Round 2")
+        ranking = [
+            self.player_one,
+            self.player_two,
+            player_three,
+            player_four,
+        ]
+
+        with patch.object(
+            self.controller,
+            "get_ranking",
+            return_value=ranking,
+        ):
+            matches = self.controller.create_matches(
+                self.tournament,
+                round_two,
+            )
+
+        self.assertIs(matches[0].player_one, self.player_one)
+        self.assertIs(matches[0].player_two, player_three)
+        self.assertIs(matches[1].player_one, self.player_two)
+        self.assertIs(matches[1].player_two, player_four)
+        mock_save_tournament.assert_called_once()
+
     @patch("controllers.tournament_controller.save_tournament")
     def test_create_matches_uses_ranking_after_first_round(
         self,
