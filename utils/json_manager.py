@@ -1,46 +1,26 @@
 """Manage JSON data for players and tournaments."""
 
 
-def create_player(player):
-    """Save a new player."""
-    pass
-
-
 def load_players():
     """Load all players."""
     pass
 
 
-def update_player(player):
-    """Update an existing player."""
+def save_players(players):
+    """Save all players."""
     pass
 
 
-def delete_player(national_id):
-    """Delete a player."""
-    pass
-
-
-def create_tournament(tournament):
-    """Save a new tournament."""
-    pass
-
-
-def load_tournaments():
-    """Load all tournaments."""
-    pass
-
-
-def load_tournament(name):
+def load_tournament(filename):
     """Load one tournament."""
     pass
 
 
-def update_tournament(tournament):
-    """Update an existing tournament."""
+def save_tournament(tournament, filename):
+    """Save one tournament."""
     pass
 
 
-def delete_tournament(name):
-    """Delete a tournament."""
+def delete_tournament(filename):
+    """Delete one tournament file."""
     pass
