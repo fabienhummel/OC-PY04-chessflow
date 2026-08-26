@@ -83,6 +83,19 @@ class TournamentView:
         """Get a player national ID."""
         return input("Player national chess ID: ")
 
+    def display_round_choices(self, rounds):
+        """Display rounds that can be selected."""
+        print("\n=== Select a round ===")
+
+        for index, round_ in enumerate(rounds, start=1):
+            print(f"{index}. {round_.name}")
+
+        print("0. Back")
+
+    def get_round_choice(self):
+        """Get the round to edit."""
+        return input("Choose a round: ")
+
     def display_matches(self, round_):
         """Display the matches of a round."""
         print(f"\n=== {round_.name} matches ===")
