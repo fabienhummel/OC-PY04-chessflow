@@ -3,8 +3,12 @@ class MainMenuView:
 
     def display_menu(self):
         """Display the main menu."""
-        pass
+        print("\n=== ChessFlow ===")
+        print("1. Manage players")
+        print("2. Manage tournaments")
+        print("3. Reports")
+        print("4. Quit")
 
     def get_choice(self):
         """Get the user choice."""
-        pass
+        return input("Choose an option: ")
