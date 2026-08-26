@@ -305,9 +305,75 @@ class ApplicationController:
             else:
                 print("Invalid choice.")
 
+    def select_report_tournament(self):
+        """Select a saved tournament for a report."""
+        filenames = self.tournament_controller.list_tournament_files()
+        self.tournament_view.display_tournament_files(filenames)
+
+        if not filenames:
+            return None
+
+        filename = self.tournament_view.get_filename()
+
+        if filename not in filenames:
+            print("Tournament not found.")
+            return None
+
+        return self.tournament_controller.load_tournament(filename)
+
     def display_reports(self):
-        """Display players and tournaments reports."""
-        players = self.player_controller.list_players()
-        tournaments = self.tournament_controller.tournaments
-        self.report_view.display_players(players)
-        self.report_view.display_tournaments(tournaments)
+        """Display the reports menu."""
+        while True:
+            self.report_view.display_menu()
+            choice = self.report_view.get_choice()
+
+            if choice == "1":
+                players = self.player_controller.list_players()
+                self.report_view.display_players(players)
+
+            elif choice == "2":
+                tournaments = self.tournament_controller.list_saved_tournaments()
+                self.report_view.display_tournaments(tournaments)
+
+            elif choice == "3":
+                tournament = self.select_report_tournament()
+
+                if tournament is not None:
+                    self.report_view.display_tournament_details(tournament)
+
+            elif choice == "4":
+                tournament = self.select_report_tournament()
+
+                if tournament is not None:
+                    self.report_view.display_tournament_players(tournament)
+
+            elif choice == "5":
+                tournament = self.select_report_tournament()
+
+                if tournament is not None:
+                    self.report_view.display_rounds(tournament.rounds)
+
+            elif choice == "6":
+                tournament = self.select_report_tournament()
+
+                if tournament is None:
+                    continue
+
+                ranking = self.tournament_controller.get_ranking(tournament)
+                ranking_with_scores = [
+                    (
+                        player,
+                        self.tournament_controller.get_player_score(
+                            tournament,
+                            player,
+                        ),
+                    )
+                    for player in ranking
+                ]
+                self.report_view.display_ranking(ranking_with_scores)
+
+            elif choice == "7":
+                break
+
+            else:
+                print("Invalid choice.")
