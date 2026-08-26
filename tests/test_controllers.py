@@ -5,6 +5,7 @@ from controllers.player_controller import PlayerController
 from controllers.tournament_controller import TournamentController
 from models.match import Match
 from models.player import Player
+from models.round import Round
 from models.tournament import Tournament
 
 
@@ -88,6 +89,69 @@ class TournamentControllerTestCase(unittest.TestCase):
         self.assertEqual(self.match.score_one, 0.5)
         self.assertEqual(self.match.score_two, 0.5)
         mock_save_tournament.assert_called_once()
+
+    def test_get_player_score(self):
+        """Calculate a player's total score across rounds."""
+        round_one = Round("Round 1")
+        match_one = Match(self.player_one, self.player_two)
+        match_one.set_result(1, 0)
+        round_one.add_match(match_one)
+
+        round_two = Round("Round 2")
+        match_two = Match(self.player_two, self.player_one)
+        match_two.set_result(0.5, 0.5)
+        round_two.add_match(match_two)
+
+        self.tournament.add_round(round_one)
+        self.tournament.add_round(round_two)
+
+        score = self.controller.get_player_score(
+            self.tournament,
+            self.player_one,
+        )
+
+        self.assertEqual(score, 1.5)
+
+    def test_get_player_score_ignores_unplayed_match(self):
+        """Ignore a match without a recorded result."""
+        round_one = Round("Round 1")
+        round_one.add_match(self.match)
+        self.tournament.add_round(round_one)
+
+        score = self.controller.get_player_score(
+            self.tournament,
+            self.player_one,
+        )
+
+        self.assertEqual(score, 0)
+
+    def test_get_ranking_sorts_players_by_score(self):
+        """Sort tournament players from highest to lowest score."""
+        player_three = Player(
+            "Bernard",
+            "Claire",
+            "1992-07-01",
+            "EF24680",
+        )
+        self.tournament.add_player(self.player_one)
+        self.tournament.add_player(self.player_two)
+        self.tournament.add_player(player_three)
+
+        round_one = Round("Round 1")
+        match_one = Match(self.player_one, self.player_two)
+        match_one.set_result(1, 0)
+        round_one.add_match(match_one)
+
+        match_two = Match(player_three, self.player_two)
+        match_two.set_result(0.5, 0.5)
+        round_one.add_match(match_two)
+        self.tournament.add_round(round_one)
+
+        ranking = self.controller.get_ranking(self.tournament)
+
+        self.assertIs(ranking[0], self.player_one)
+        self.assertIs(ranking[1], player_three)
+        self.assertIs(ranking[2], self.player_two)
 
 
 if __name__ == "__main__":
