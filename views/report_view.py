@@ -1,6 +1,21 @@
 class ReportView:
     """Display application reports."""
 
+    def display_menu(self):
+        """Display the reports menu."""
+        print("\n=== Reports ===")
+        print("1. List all players")
+        print("2. List all tournaments")
+        print("3. Tournament details")
+        print("4. Tournament players")
+        print("5. Tournament rounds and matches")
+        print("6. Tournament ranking")
+        print("7. Back")
+
+    def get_choice(self):
+        """Get the user choice."""
+        return input("Choose an option: ")
+
     def display_players(self, players):
         """Display players."""
         print("\n=== Players report ===")
@@ -40,9 +55,19 @@ class ReportView:
         print(f"Number of rounds: {tournament.number_of_rounds}")
         print(f"Current round: {tournament.current_round}")
 
-        print("\nPlayers:")
+    def display_tournament_players(self, tournament):
+        """Display players registered in a tournament."""
+        print(f"\n=== {tournament.name} players ===")
+
+        if not tournament.players:
+            print("No players registered.")
+            return
+
         for player in tournament.players:
-            print(f"- {player.last_name} {player.first_name}")
+            print(
+                f"{player.last_name} {player.first_name} - "
+                f"{player.birth_date} - {player.national_id}"
+            )
 
     def display_rounds(self, rounds):
         """Display tournament rounds and matches."""
