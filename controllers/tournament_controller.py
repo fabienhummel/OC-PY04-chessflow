@@ -92,6 +92,23 @@ class TournamentController:
             reverse=True,
         )
 
+    def have_played_together(self, tournament, player_one, player_two):
+        """Check if two players have already played together."""
+        for round_ in tournament.rounds:
+            for match in round_.matches:
+                players = {
+                    match.player_one.national_id,
+                    match.player_two.national_id,
+                }
+
+                if players == {
+                    player_one.national_id,
+                    player_two.national_id,
+                }:
+                    return True
+
+        return False
+
     def create_matches(self, tournament, round_):
         """Create matches for a round."""
         if tournament.current_round == 1:
@@ -100,8 +117,24 @@ class TournamentController:
         else:
             players = self.get_ranking(tournament)
 
-        for index in range(0, len(players), 2):
-            match = Match(players[index], players[index + 1])
+        while players:
+            player_one = players.pop(0)
+            opponent_index = None
+
+            for index, player_two in enumerate(players):
+                if not self.have_played_together(
+                    tournament,
+                    player_one,
+                    player_two,
+                ):
+                    opponent_index = index
+                    break
+
+            if opponent_index is None:
+                opponent_index = 0
+
+            player_two = players.pop(opponent_index)
+            match = Match(player_one, player_two)
             round_.add_match(match)
 
         save_tournament(tournament, f"{tournament.name}.json")
