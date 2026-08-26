@@ -56,6 +56,10 @@ class TournamentController:
         self.tournaments.append(tournament)
         return tournament
 
+    def can_add_player(self, tournament):
+        """Check if players can still be added to a tournament."""
+        return tournament.current_round == 0
+
     def add_player(self, tournament, player):
         """Add a player to a tournament."""
         tournament.add_player(player)
