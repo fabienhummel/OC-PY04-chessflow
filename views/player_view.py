@@ -9,7 +9,7 @@ class PlayerView:
         print("3. Search a player")
         print("4. Edit a player")
         print("5. Delete a player")
-        print("6. Back")
+        print("0. Back")
 
     def get_choice(self):
         """Get the user choice."""
