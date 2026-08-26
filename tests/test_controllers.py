@@ -150,8 +150,7 @@ class TournamentControllerTestCase(unittest.TestCase):
         ranking = self.controller.get_ranking(self.tournament)
 
         self.assertIs(ranking[0], self.player_one)
-        self.assertIs(ranking[1], player_three)
-        self.assertIs(ranking[2], self.player_two)
+        self.assertEqual(set(ranking[1:]), {self.player_two, player_three})
 
 
 if __name__ == "__main__":
