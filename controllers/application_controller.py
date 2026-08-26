@@ -156,6 +156,15 @@ class ApplicationController:
                     print("All rounds have already been created.")
                     continue
 
+                if not self.tournament_controller.can_create_next_round(
+                    self.current_tournament
+                ):
+                    print(
+                        "The current round must be closed before "
+                        "creating the next round."
+                    )
+                    continue
+
                 players = self.current_tournament.players
 
                 if len(players) == 0:
@@ -180,7 +189,20 @@ class ApplicationController:
                     print("No round available.")
                     continue
 
-                round_ = self.current_tournament.rounds[-1]
+                self.tournament_view.display_round_choices(
+                    self.current_tournament.rounds
+                )
+                round_choice = self.tournament_view.get_round_choice()
+
+                if round_choice == "0":
+                    continue
+
+                try:
+                    round_index = int(round_choice) - 1
+                    round_ = self.current_tournament.rounds[round_index]
+                except (ValueError, IndexError):
+                    print("Invalid round.")
+                    continue
 
                 while True:
                     self.tournament_view.display_matches(round_)
@@ -212,7 +234,18 @@ class ApplicationController:
                     print("No round available.")
                     continue
 
-                round_ = self.current_tournament.rounds[-1]
+                round_ = self.tournament_controller.get_open_round(
+                    self.current_tournament
+                )
+
+                if round_ is None:
+                    print("No open round available.")
+                    continue
+
+                if not self.tournament_controller.is_round_complete(round_):
+                    print("Enter all match results before closing the round.")
+                    continue
+
                 self.tournament_controller.close_round(
                     self.current_tournament,
                     round_,
