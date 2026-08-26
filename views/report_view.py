@@ -10,7 +10,7 @@ class ReportView:
         print("4. Tournament players")
         print("5. Tournament rounds and matches")
         print("6. Tournament ranking")
-        print("7. Back")
+        print("0. Back")
 
     def get_choice(self):
         """Get the user choice."""
