@@ -161,6 +161,15 @@ class ApplicationController:
             if choice == "1":
                 self.player_view.display_players(self.current_tournament.players)
             elif choice == "2":
+                if not self.tournament_controller.can_add_player(
+                    self.current_tournament
+                ):
+                    print(
+                        "Players cannot be added after the first round "
+                        "has started."
+                    )
+                    continue
+
                 national_id = self.tournament_view.get_player_national_id()
                 player = self.player_controller.find_player(national_id)
 
