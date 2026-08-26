@@ -152,6 +152,56 @@ class TournamentControllerTestCase(unittest.TestCase):
         self.assertIs(ranking[0], self.player_one)
         self.assertEqual(set(ranking[1:]), {self.player_two, player_three})
 
+    @patch("controllers.tournament_controller.save_tournament")
+    def test_create_matches_uses_ranking_after_first_round(
+        self,
+        mock_save_tournament,
+    ):
+        """Use ranking order to pair players after round one."""
+        player_three = Player(
+            "Bernard",
+            "Claire",
+            "1992-07-01",
+            "EF24680",
+        )
+        player_four = Player(
+            "Petit",
+            "Lucas",
+            "1994-04-20",
+            "GH13579",
+        )
+        self.tournament.players = [
+            self.player_one,
+            self.player_two,
+            player_three,
+            player_four,
+        ]
+        self.tournament.current_round = 2
+        round_two = Round("Round 2")
+        ranking = [
+            player_three,
+            self.player_one,
+            player_four,
+            self.player_two,
+        ]
+
+        with patch.object(
+            self.controller,
+            "get_ranking",
+            return_value=ranking,
+        ) as mock_get_ranking:
+            matches = self.controller.create_matches(
+                self.tournament,
+                round_two,
+            )
+
+        mock_get_ranking.assert_called_once_with(self.tournament)
+        self.assertIs(matches[0].player_one, player_three)
+        self.assertIs(matches[0].player_two, self.player_one)
+        self.assertIs(matches[1].player_one, player_four)
+        self.assertIs(matches[1].player_two, self.player_two)
+        mock_save_tournament.assert_called_once()
+
 
 if __name__ == "__main__":
     unittest.main()
