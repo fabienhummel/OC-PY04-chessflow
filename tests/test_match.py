@@ -21,6 +21,17 @@ class MatchTestCase(unittest.TestCase):
         self.assertIsNone(match.score_one)
         self.assertIsNone(match.score_two)
 
+    def test_match_uses_required_tuple_representation(self):
+        """Store match data as a tuple containing two player-score lists."""
+        match = Match(self.player_one, self.player_two)
+
+        self.assertIsInstance(match.pair, tuple)
+        self.assertEqual(len(match.pair), 2)
+        self.assertIsInstance(match.pair[0], list)
+        self.assertIsInstance(match.pair[1], list)
+        self.assertEqual(match.pair[0], [self.player_one, None])
+        self.assertEqual(match.pair[1], [self.player_two, None])
+
     def test_set_result(self):
         """Set the result of a match."""
         match = Match(self.player_one, self.player_two)
@@ -29,6 +40,8 @@ class MatchTestCase(unittest.TestCase):
 
         self.assertEqual(match.score_one, 1)
         self.assertEqual(match.score_two, 0)
+        self.assertEqual(match.pair[0][1], 1)
+        self.assertEqual(match.pair[1][1], 0)
 
     def test_match_to_dict(self):
         """Convert a match to a dictionary."""
@@ -52,6 +65,7 @@ class MatchTestCase(unittest.TestCase):
         self.assertEqual(restored_match.player_two.national_id, "CD67890")
         self.assertEqual(restored_match.score_one, 1)
         self.assertEqual(restored_match.score_two, 0)
+        self.assertIsInstance(restored_match.pair, tuple)
 
 
 if __name__ == "__main__":
