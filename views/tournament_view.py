@@ -3,12 +3,46 @@ class TournamentView:
 
     def get_tournament_data(self):
         """Get tournament data from the user."""
-        pass
+        print("\n=== Create a tournament ===")
+        name = input("Name: ")
+        location = input("Location: ")
+        start_date = input("Start date (YYYY-MM-DD): ")
+        end_date = input("End date (YYYY-MM-DD): ")
+        description = input("Description: ")
+        number_of_rounds = input("Number of rounds (default 4): ")
+
+        if number_of_rounds:
+            number_of_rounds = int(number_of_rounds)
+        else:
+            number_of_rounds = 4
+
+        return (
+            name,
+            location,
+            start_date,
+            end_date,
+            description,
+            number_of_rounds,
+        )
 
     def display_tournament(self, tournament):
         """Display a tournament."""
-        pass
+        print("\n=== Tournament ===")
+        print(f"Name: {tournament.name}")
+        print(f"Location: {tournament.location}")
+        print(f"Start date: {tournament.start_date}")
+        print(f"End date: {tournament.end_date}")
+        print(f"Description: {tournament.description}")
+        print(f"Rounds: {tournament.current_round}/{tournament.number_of_rounds}")
+        print(f"Players: {len(tournament.players)}")
 
     def get_match_result(self, match):
         """Get a match result from the user."""
-        pass
+        print(
+            f"\n{match.player_one.first_name} {match.player_one.last_name} "
+            f"vs {match.player_two.first_name} {match.player_two.last_name}"
+        )
+        score_one = float(input("Score player 1: "))
+        score_two = float(input("Score player 2: "))
+
+        return score_one, score_two
