@@ -13,13 +13,26 @@ class TournamentView:
         """Display the loaded tournament menu."""
         print("\n=== Loaded tournament ===")
         print("1. Display tournament")
-        print("2. List tournament players")
-        print("3. Add a player")
-        print("4. List rounds")
-        print("5. Create next round")
-        print("6. Enter or edit round results")
-        print("7. Close current round")
-        print("8. Back")
+        print("2. Manage tournament players")
+        print("3. Manage rounds")
+        print("4. Display ranking")
+        print("5. Back")
+
+    def display_players_menu(self):
+        """Display the tournament players menu."""
+        print("\n=== Manage tournament players ===")
+        print("1. List tournament players")
+        print("2. Add a player")
+        print("3. Back")
+
+    def display_rounds_menu(self):
+        """Display the tournament rounds menu."""
+        print("\n=== Manage rounds ===")
+        print("1. List rounds")
+        print("2. Create next round")
+        print("3. Enter or edit round results")
+        print("4. Close current round")
+        print("5. Back")
 
     def get_choice(self):
         """Get the user choice."""
