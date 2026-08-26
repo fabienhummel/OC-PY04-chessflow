@@ -50,6 +50,15 @@ class TournamentController:
             if filename.endswith(".json")
         )
 
+    def list_saved_tournaments(self):
+        """Load all saved tournaments for reports."""
+        tournaments = []
+
+        for filename in self.list_tournament_files():
+            tournaments.append(load_tournament(filename))
+
+        return tournaments
+
     def load_tournament(self, filename):
         """Load a tournament."""
         tournament = load_tournament(filename)
