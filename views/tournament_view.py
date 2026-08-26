@@ -17,7 +17,7 @@ class TournamentView:
         print("3. Add a player")
         print("4. List rounds")
         print("5. Create next round")
-        print("6. Enter current round results")
+        print("6. Enter or edit round results")
         print("7. Close current round")
         print("8. Back")
 
@@ -83,13 +83,44 @@ class TournamentView:
         """Get a player national ID."""
         return input("Player national chess ID: ")
 
+    def display_matches(self, round_):
+        """Display the matches of a round."""
+        print(f"\n=== {round_.name} matches ===")
+
+        for index, match in enumerate(round_.matches, start=1):
+            print(
+                f"{index}. {match.player_one.last_name} "
+                f"{match.player_one.first_name} ({match.score_one}) - "
+                f"{match.player_two.last_name} "
+                f"{match.player_two.first_name} ({match.score_two})"
+            )
+
+        print("0. Back")
+
+    def get_match_choice(self):
+        """Get the match to edit."""
+        return input("Choose a match: ")
+
     def get_match_result(self, match):
         """Get a match result from the user."""
         print(
             f"\n{match.player_one.first_name} {match.player_one.last_name} "
             f"vs {match.player_two.first_name} {match.player_two.last_name}"
         )
-        score_one = float(input("Score player 1: "))
-        score_two = float(input("Score player 2: "))
+        print(f"Current result: {match.score_one} - {match.score_two}")
 
-        return score_one, score_two
+        while True:
+            score_one = input("Score player 1: ").replace(",", ".")
+            score_two = input("Score player 2: ").replace(",", ".")
+
+            try:
+                score_one = float(score_one)
+                score_two = float(score_two)
+            except ValueError:
+                print("Invalid score.")
+                continue
+
+            if (score_one, score_two) in ((1, 0), (0, 1), (0.5, 0.5)):
+                return score_one, score_two
+
+            print("Valid results are 1-0, 0-1 or 0.5-0.5.")
