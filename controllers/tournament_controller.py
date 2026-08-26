@@ -69,6 +69,29 @@ class TournamentController:
         save_tournament(tournament, f"{tournament.name}.json")
         return round_
 
+    def get_player_score(self, tournament, player):
+        """Calculate a player's total score in a tournament."""
+        score = 0
+
+        for round_ in tournament.rounds:
+            for match in round_.matches:
+                if match.player_one.national_id == player.national_id:
+                    if match.score_one is not None:
+                        score += match.score_one
+                elif match.player_two.national_id == player.national_id:
+                    if match.score_two is not None:
+                        score += match.score_two
+
+        return score
+
+    def get_ranking(self, tournament):
+        """Return tournament players sorted by score."""
+        return sorted(
+            tournament.players,
+            key=lambda player: self.get_player_score(tournament, player),
+            reverse=True,
+        )
+
     def create_matches(self, tournament, round_):
         """Create matches for a round."""
         players = tournament.players.copy()
