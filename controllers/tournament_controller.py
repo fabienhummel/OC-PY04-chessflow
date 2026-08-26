@@ -69,6 +69,26 @@ class TournamentController:
         save_tournament(tournament, f"{tournament.name}.json")
         return round_
 
+    def get_open_round(self, tournament):
+        """Return the first round that is still open."""
+        for round_ in tournament.rounds:
+            if round_.end_datetime is None:
+                return round_
+
+        return None
+
+    def can_create_next_round(self, tournament):
+        """Check if a new round can be created."""
+        return self.get_open_round(tournament) is None
+
+    def is_round_complete(self, round_):
+        """Check if every match in a round has a result."""
+        for match in round_.matches:
+            if match.score_one is None or match.score_two is None:
+                return False
+
+        return True
+
     def get_player_score(self, tournament, player):
         """Calculate a player's total score in a tournament."""
         score = 0
