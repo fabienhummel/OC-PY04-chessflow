@@ -221,3 +221,7 @@ __marimo__/
 .DS_Store
 .AppleDouble
 .LSOverride
+
+# ChessFlow local data
+/data/players.json
+/data/tournaments/*.json

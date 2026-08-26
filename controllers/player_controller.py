@@ -19,3 +19,31 @@ class PlayerController:
     def list_players(self):
         """List all players."""
         return self.players
+
+    def find_player(self, national_id):
+        """Find a player by national chess ID."""
+        for player in self.players:
+            if player.national_id == national_id:
+                return player
+
+        return None
+
+    def update_player(
+        self,
+        player,
+        last_name,
+        first_name,
+        birth_date,
+        national_id,
+    ):
+        """Update a player."""
+        player.last_name = last_name
+        player.first_name = first_name
+        player.birth_date = birth_date
+        player.national_id = national_id
+        save_players(self.players)
+
+    def delete_player(self, player):
+        """Delete a player."""
+        self.players.remove(player)
+        save_players(self.players)

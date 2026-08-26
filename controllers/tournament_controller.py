@@ -1,3 +1,4 @@
+import os
 import random
 from datetime import datetime
 
@@ -35,6 +36,19 @@ class TournamentController:
         self.tournaments.append(tournament)
         save_tournament(tournament, f"{tournament.name}.json")
         return tournament
+
+    def list_tournament_files(self):
+        """List saved tournament files."""
+        folder = "data/tournaments"
+
+        if not os.path.exists(folder):
+            return []
+
+        return sorted(
+            filename
+            for filename in os.listdir(folder)
+            if filename.endswith(".json")
+        )
 
     def load_tournament(self, filename):
         """Load a tournament."""
