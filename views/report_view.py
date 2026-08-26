@@ -3,16 +3,64 @@ class ReportView:
 
     def display_players(self, players):
         """Display players."""
-        pass
+        print("\n=== Players report ===")
+
+        if not players:
+            print("No players registered.")
+            return
+
+        for player in players:
+            print(
+                f"{player.last_name} {player.first_name} - "
+                f"{player.birth_date} - {player.national_id}"
+            )
 
     def display_tournaments(self, tournaments):
         """Display tournaments."""
-        pass
+        print("\n=== Tournaments report ===")
+
+        if not tournaments:
+            print("No tournaments registered.")
+            return
+
+        for tournament in tournaments:
+            print(
+                f"{tournament.name} - {tournament.location} - "
+                f"{tournament.start_date} to {tournament.end_date}"
+            )
 
     def display_tournament_details(self, tournament):
         """Display tournament details."""
-        pass
+        print("\n=== Tournament details ===")
+        print(f"Name: {tournament.name}")
+        print(f"Location: {tournament.location}")
+        print(f"Start date: {tournament.start_date}")
+        print(f"End date: {tournament.end_date}")
+        print(f"Description: {tournament.description}")
+        print(f"Number of rounds: {tournament.number_of_rounds}")
+        print(f"Current round: {tournament.current_round}")
+
+        print("\nPlayers:")
+        for player in tournament.players:
+            print(f"- {player.last_name} {player.first_name}")
 
     def display_rounds(self, rounds):
         """Display tournament rounds and matches."""
-        pass
+        print("\n=== Rounds report ===")
+
+        if not rounds:
+            print("No rounds registered.")
+            return
+
+        for round_ in rounds:
+            print(f"\n{round_.name}")
+            print(f"Start: {round_.start_datetime}")
+            print(f"End: {round_.end_datetime}")
+
+            for match in round_.matches:
+                print(
+                    f"{match.player_one.last_name} {match.player_one.first_name} "
+                    f"({match.score_one}) - "
+                    f"{match.player_two.last_name} {match.player_two.first_name} "
+                    f"({match.score_two})"
+                )
