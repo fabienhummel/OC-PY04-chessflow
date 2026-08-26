@@ -94,10 +94,11 @@ class TournamentController:
 
     def create_matches(self, tournament, round_):
         """Create matches for a round."""
-        players = tournament.players.copy()
-
         if tournament.current_round == 1:
+            players = tournament.players.copy()
             random.shuffle(players)
+        else:
+            players = self.get_ranking(tournament)
 
         for index in range(0, len(players), 2):
             match = Match(players[index], players[index + 1])
