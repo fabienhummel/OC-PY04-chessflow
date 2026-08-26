@@ -7,7 +7,7 @@ class TournamentView:
         print("1. Create a tournament")
         print("2. List saved tournaments")
         print("3. Load a tournament")
-        print("4. Back")
+        print("0. Back")
 
     def display_loaded_menu(self):
         """Display the loaded tournament menu."""
@@ -16,14 +16,14 @@ class TournamentView:
         print("2. Manage tournament players")
         print("3. Manage rounds")
         print("4. Display ranking")
-        print("5. Back")
+        print("0. Back")
 
     def display_players_menu(self):
         """Display the tournament players menu."""
         print("\n=== Manage tournament players ===")
         print("1. List tournament players")
         print("2. Add a player")
-        print("3. Back")
+        print("0. Back")
 
     def display_rounds_menu(self):
         """Display the tournament rounds menu."""
@@ -32,7 +32,7 @@ class TournamentView:
         print("2. Create next round")
         print("3. Enter or edit round results")
         print("4. Close current round")
-        print("5. Back")
+        print("0. Back")
 
     def get_choice(self):
         """Get the user choice."""
