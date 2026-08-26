@@ -1,9 +1,12 @@
 """ChessFlow application entry point."""
 
+from controllers.application_controller import ApplicationController
 
-def main() -> None:
+
+def main():
     """Start the ChessFlow application."""
-    pass
+    application = ApplicationController()
+    application.run()
 
 
 if __name__ == "__main__":
