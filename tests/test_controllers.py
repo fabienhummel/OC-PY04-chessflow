@@ -270,6 +270,129 @@ class TournamentControllerTestCase(unittest.TestCase):
         self.assertIs(matches[1].player_two, self.player_two)
         mock_save_tournament.assert_called_once()
 
+    @patch("controllers.tournament_controller.save_tournament")
+    def test_second_round_with_eight_players_has_no_repeat(
+        self,
+        mock_save_tournament,
+    ):
+        """Avoid all first-round pairs with eight players."""
+        players = [
+            Player("Player1", "A", "1990-01-01", "AA00001"),
+            Player("Player2", "B", "1990-01-02", "BB00002"),
+            Player("Player3", "C", "1990-01-03", "CC00003"),
+            Player("Player4", "D", "1990-01-04", "DD00004"),
+            Player("Player5", "E", "1990-01-05", "EE00005"),
+            Player("Player6", "F", "1990-01-06", "FF00006"),
+            Player("Player7", "G", "1990-01-07", "GG00007"),
+            Player("Player8", "H", "1990-01-08", "HH00008"),
+        ]
+        self.tournament.players = players
+
+        round_one = Round("Round 1")
+        previous_pairs = [
+            (players[0], players[1]),
+            (players[2], players[3]),
+            (players[4], players[5]),
+            (players[6], players[7]),
+        ]
+
+        for player_one, player_two in previous_pairs:
+            round_one.add_match(Match(player_one, player_two))
+
+        self.tournament.add_round(round_one)
+        self.tournament.current_round = 2
+        round_two = Round("Round 2")
+
+        with patch.object(
+            self.controller,
+            "get_ranking",
+            return_value=players,
+        ):
+            matches = self.controller.create_matches(
+                self.tournament,
+                round_two,
+            )
+
+        old_pairs = {
+            frozenset([player_one.national_id, player_two.national_id])
+            for player_one, player_two in previous_pairs
+        }
+
+        for match in matches:
+            pair = frozenset(
+                [match.player_one.national_id, match.player_two.national_id]
+            )
+            self.assertNotIn(pair, old_pairs)
+
+        mock_save_tournament.assert_called_once()
+
+    @patch("controllers.tournament_controller.save_tournament")
+    def test_third_round_with_eight_players_has_no_repeat(
+        self,
+        mock_save_tournament,
+    ):
+        """Avoid pairs from both previous rounds with eight players."""
+        players = [
+            Player("Player1", "A", "1990-01-01", "AA00001"),
+            Player("Player2", "B", "1990-01-02", "BB00002"),
+            Player("Player3", "C", "1990-01-03", "CC00003"),
+            Player("Player4", "D", "1990-01-04", "DD00004"),
+            Player("Player5", "E", "1990-01-05", "EE00005"),
+            Player("Player6", "F", "1990-01-06", "FF00006"),
+            Player("Player7", "G", "1990-01-07", "GG00007"),
+            Player("Player8", "H", "1990-01-08", "HH00008"),
+        ]
+        self.tournament.players = players
+
+        round_one_pairs = [
+            (players[0], players[1]),
+            (players[2], players[3]),
+            (players[4], players[5]),
+            (players[6], players[7]),
+        ]
+        round_two_pairs = [
+            (players[0], players[2]),
+            (players[1], players[3]),
+            (players[4], players[6]),
+            (players[5], players[7]),
+        ]
+
+        round_one = Round("Round 1")
+        for player_one, player_two in round_one_pairs:
+            round_one.add_match(Match(player_one, player_two))
+
+        round_two = Round("Round 2")
+        for player_one, player_two in round_two_pairs:
+            round_two.add_match(Match(player_one, player_two))
+
+        self.tournament.add_round(round_one)
+        self.tournament.add_round(round_two)
+        self.tournament.current_round = 3
+        round_three = Round("Round 3")
+
+        with patch.object(
+            self.controller,
+            "get_ranking",
+            return_value=players,
+        ):
+            matches = self.controller.create_matches(
+                self.tournament,
+                round_three,
+            )
+
+        old_pairs = {
+            frozenset([player_one.national_id, player_two.national_id])
+            for player_one, player_two in round_one_pairs + round_two_pairs
+        }
+
+        for match in matches:
+            pair = frozenset(
+                [match.player_one.national_id, match.player_two.national_id]
+            )
+            self.assertNotIn(pair, old_pairs)
+
+        mock_save_tournament.assert_called_once()
+
 
 if __name__ == "__main__":
     unittest.main()
