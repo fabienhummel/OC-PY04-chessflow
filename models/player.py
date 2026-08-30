@@ -1,3 +1,6 @@
+import re
+
+
 class Player:
     """Represent a chess player."""
 
@@ -6,7 +9,19 @@ class Player:
         self.last_name = last_name
         self.first_name = first_name
         self.birth_date = birth_date
-        self.national_id = national_id
+        self.national_id = self.validate_national_id(national_id)
+
+    @staticmethod
+    def validate_national_id(national_id):
+        """Validate and normalize a national chess ID."""
+        normalized_id = national_id.strip().upper()
+
+        if re.fullmatch(r"[A-Z]{2}[0-9]{5}", normalized_id) is None:
+            raise ValueError(
+                "National chess ID must contain two letters followed by five digits."
+            )
+
+        return normalized_id
 
     def to_dict(self):
         """Convert the player to a dictionary."""
