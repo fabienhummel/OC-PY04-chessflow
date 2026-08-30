@@ -55,15 +55,15 @@ class ReportView:
         print(f"Number of rounds: {tournament.number_of_rounds}")
         print(f"Current round: {tournament.current_round}")
 
-    def display_tournament_players(self, tournament):
+    def display_tournament_players(self, tournament_name, players):
         """Display players registered in a tournament."""
-        print(f"\n=== {tournament.name} players ===")
+        print(f"\n=== {tournament_name} players ===")
 
-        if not tournament.players:
+        if not players:
             print("No players registered.")
             return
 
-        for player in tournament.players:
+        for player in players:
             print(
                 f"{player.last_name} {player.first_name} - "
                 f"{player.birth_date} - {player.national_id}"

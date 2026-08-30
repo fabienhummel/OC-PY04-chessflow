@@ -65,6 +65,16 @@ class TournamentController:
         self.tournaments.append(tournament)
         return tournament
 
+    def list_tournament_players(self, tournament):
+        """List tournament players in alphabetical order."""
+        return sorted(
+            tournament.players,
+            key=lambda player: (
+                player.last_name.lower(),
+                player.first_name.lower(),
+            ),
+        )
+
     def can_add_player(self, tournament):
         """Check if players can still be added to a tournament."""
         return tournament.current_round == 0

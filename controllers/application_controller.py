@@ -170,7 +170,10 @@ class ApplicationController:
             choice = self.tournament_view.get_choice()
 
             if choice == "1":
-                self.player_view.display_players(self.current_tournament.players)
+                players = self.tournament_controller.list_tournament_players(
+                    self.current_tournament
+                )
+                self.player_view.display_players(players)
             elif choice == "2":
                 if not self.tournament_controller.can_add_player(
                     self.current_tournament
@@ -361,7 +364,13 @@ class ApplicationController:
                 tournament = self.select_report_tournament()
 
                 if tournament is not None:
-                    self.report_view.display_tournament_players(tournament)
+                    players = self.tournament_controller.list_tournament_players(
+                        tournament
+                    )
+                    self.report_view.display_tournament_players(
+                        tournament.name,
+                        players,
+                    )
 
             elif choice == "5":
                 tournament = self.select_report_tournament()
