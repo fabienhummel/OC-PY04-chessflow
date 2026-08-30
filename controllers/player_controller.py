@@ -17,9 +17,11 @@ class PlayerController:
 
     def ensure_players_loaded(self):
         """Prevent writes when the player registry could not be loaded."""
-        if self.load_error is not None:
+        load_error = getattr(self, "load_error", None)
+
+        if load_error is not None:
             raise ValueError(
-                f"{self.load_error} Fix the players file before modifying the registry."
+                f"{load_error} Fix the players file before modifying the registry."
             )
 
     def create_player(self, last_name, first_name, birth_date, national_id):
