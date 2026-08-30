@@ -28,11 +28,6 @@ class TournamentController:
         number_of_rounds=4,
     ):
         """Create a tournament."""
-        filename = f"{name}.json"
-
-        if filename in self.list_tournament_files():
-            raise ValueError("A tournament with this name already exists.")
-
         tournament = Tournament(
             name,
             location,
@@ -41,6 +36,11 @@ class TournamentController:
             description,
             number_of_rounds,
         )
+        filename = f"{tournament.name}.json"
+
+        if filename in self.list_tournament_files():
+            raise ValueError("A tournament with this name already exists.")
+
         self.tournaments.append(tournament)
         save_tournament(tournament, filename)
         return tournament

@@ -21,6 +21,11 @@ class MatchTestCase(unittest.TestCase):
         self.assertIsNone(match.score_one)
         self.assertIsNone(match.score_two)
 
+    def test_match_rejects_same_player_twice(self):
+        """Reject a match containing the same player twice."""
+        with self.assertRaises(ValueError):
+            Match(self.player_one, self.player_one)
+
     def test_match_uses_required_tuple_representation(self):
         """Store match data as a tuple containing two player-score lists."""
         match = Match(self.player_one, self.player_two)
@@ -33,7 +38,7 @@ class MatchTestCase(unittest.TestCase):
         self.assertEqual(match.pair[1], [self.player_two, None])
 
     def test_set_result(self):
-        """Set the result of a match."""
+        """Set the result of the match."""
         match = Match(self.player_one, self.player_two)
 
         match.set_result(1, 0)
@@ -42,6 +47,13 @@ class MatchTestCase(unittest.TestCase):
         self.assertEqual(match.score_two, 0)
         self.assertEqual(match.pair[0][1], 1)
         self.assertEqual(match.pair[1][1], 0)
+
+    def test_set_result_rejects_invalid_score(self):
+        """Reject a result outside the three allowed combinations."""
+        match = Match(self.player_one, self.player_two)
+
+        with self.assertRaises(ValueError):
+            match.set_result(2, 0)
 
     def test_match_to_dict(self):
         """Convert a match to a dictionary."""

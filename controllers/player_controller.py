@@ -66,6 +66,9 @@ class PlayerController:
     ):
         """Update a player."""
         self.ensure_players_loaded()
+        normalized_last_name = Player.validate_required_text(last_name, "Last name")
+        normalized_first_name = Player.validate_required_text(first_name, "First name")
+        normalized_birth_date = Player.validate_birth_date(birth_date)
         normalized_id = Player.validate_national_id(national_id)
 
         for existing_player in self.players:
@@ -77,9 +80,9 @@ class PlayerController:
                     "A player with this national chess ID already exists."
                 )
 
-        player.last_name = last_name
-        player.first_name = first_name
-        player.birth_date = birth_date
+        player.last_name = normalized_last_name
+        player.first_name = normalized_first_name
+        player.birth_date = normalized_birth_date
         player.national_id = normalized_id
         save_players(self.players)
 

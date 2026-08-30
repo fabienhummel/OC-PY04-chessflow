@@ -48,9 +48,7 @@ class TournamentView:
         description = input("Description: ")
         number_of_rounds = input("Number of rounds (default 4): ")
 
-        if number_of_rounds:
-            number_of_rounds = int(number_of_rounds)
-        else:
+        if not number_of_rounds:
             number_of_rounds = 4
 
         return (
