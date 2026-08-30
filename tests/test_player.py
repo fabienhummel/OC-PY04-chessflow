@@ -15,6 +15,34 @@ class PlayerTestCase(unittest.TestCase):
         self.assertEqual(player.birth_date, "1990-05-12")
         self.assertEqual(player.national_id, "AB12345")
 
+    def test_player_normalizes_required_fields(self):
+        """Remove surrounding spaces from required player fields."""
+        player = Player(
+            " Dupont ",
+            " Alice ",
+            " 1990-05-12 ",
+            "AB12345",
+        )
+
+        self.assertEqual(player.last_name, "Dupont")
+        self.assertEqual(player.first_name, "Alice")
+        self.assertEqual(player.birth_date, "1990-05-12")
+
+    def test_player_rejects_empty_last_name(self):
+        """Reject a player without a last name."""
+        with self.assertRaises(ValueError):
+            Player("   ", "Alice", "1990-05-12", "AB12345")
+
+    def test_player_rejects_empty_first_name(self):
+        """Reject a player without a first name."""
+        with self.assertRaises(ValueError):
+            Player("Dupont", "   ", "1990-05-12", "AB12345")
+
+    def test_player_rejects_invalid_birth_date(self):
+        """Reject a birth date that does not exist."""
+        with self.assertRaises(ValueError):
+            Player("Dupont", "Alice", "2026-02-30", "AB12345")
+
     def test_player_normalizes_national_id(self):
         """Normalize a valid national chess ID."""
         player = Player("Dupont", "Alice", "1990-05-12", " ab12345 ")
