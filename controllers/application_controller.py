@@ -21,6 +21,9 @@ class ApplicationController:
 
     def run(self):
         """Run the application."""
+        if self.player_controller.load_error is not None:
+            print(self.player_controller.load_error)
+
         while True:
             self.main_menu_view.display_menu()
             choice = self.main_menu_view.get_choice()
@@ -98,9 +101,15 @@ class ApplicationController:
 
             if choice == "1":
                 tournament_data = self.tournament_view.get_tournament_data()
-                tournament = self.tournament_controller.create_tournament(
-                    *tournament_data
-                )
+
+                try:
+                    tournament = self.tournament_controller.create_tournament(
+                        *tournament_data
+                    )
+                except ValueError as error:
+                    print(error)
+                    continue
+
                 self.tournament_view.display_tournament(tournament)
 
             elif choice == "2":
@@ -120,9 +129,14 @@ class ApplicationController:
                     print("Tournament not found.")
                     continue
 
-                self.current_tournament = (
-                    self.tournament_controller.load_tournament(filename)
-                )
+                try:
+                    self.current_tournament = (
+                        self.tournament_controller.load_tournament(filename)
+                    )
+                except ValueError as error:
+                    print(error)
+                    continue
+
                 self.manage_loaded_tournament()
 
             elif choice == "0":
@@ -338,7 +352,11 @@ class ApplicationController:
             print("Tournament not found.")
             return None
 
-        return self.tournament_controller.load_tournament(filename)
+        try:
+            return self.tournament_controller.load_tournament(filename)
+        except ValueError as error:
+            print(error)
+            return None
 
     def display_reports(self):
         """Display the reports menu."""
@@ -351,7 +369,12 @@ class ApplicationController:
                 self.report_view.display_players(players)
 
             elif choice == "2":
-                tournaments = self.tournament_controller.list_saved_tournaments()
+                try:
+                    tournaments = self.tournament_controller.list_saved_tournaments()
+                except ValueError as error:
+                    print(error)
+                    continue
+
                 self.report_view.display_tournaments(tournaments)
 
             elif choice == "3":
