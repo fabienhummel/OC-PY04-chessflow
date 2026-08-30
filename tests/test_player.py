@@ -15,6 +15,28 @@ class PlayerTestCase(unittest.TestCase):
         self.assertEqual(player.birth_date, "1990-05-12")
         self.assertEqual(player.national_id, "AB12345")
 
+    def test_player_normalizes_national_id(self):
+        """Normalize a valid national chess ID."""
+        player = Player("Dupont", "Alice", "1990-05-12", " ab12345 ")
+
+        self.assertEqual(player.national_id, "AB12345")
+
+    def test_player_rejects_invalid_national_id(self):
+        """Reject national chess IDs with an invalid format."""
+        invalid_ids = [
+            "A12345",
+            "ABC12345",
+            "AB1234",
+            "AB123456",
+            "1234567",
+            "AB12C45",
+        ]
+
+        for national_id in invalid_ids:
+            with self.subTest(national_id=national_id):
+                with self.assertRaises(ValueError):
+                    Player("Dupont", "Alice", "1990-05-12", national_id)
+
     def test_player_to_dict(self):
         """Convert a player to a dictionary."""
         player = Player("Dupont", "Alice", "1990-05-12", "AB12345")
