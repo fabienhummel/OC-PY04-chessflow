@@ -1,11 +1,14 @@
-import os
 import random
 from datetime import datetime
 
 from models.match import Match
 from models.round import Round
 from models.tournament import Tournament
-from utils.json_manager import load_tournament, save_tournament
+from utils.json_manager import (
+    TOURNAMENTS_FOLDER,
+    load_tournament,
+    save_tournament,
+)
 
 
 class TournamentController:
@@ -25,6 +28,11 @@ class TournamentController:
         number_of_rounds=4,
     ):
         """Create a tournament."""
+        filename = f"{name}.json"
+
+        if filename in self.list_tournament_files():
+            raise ValueError("A tournament with this name already exists.")
+
         tournament = Tournament(
             name,
             location,
@@ -34,20 +42,18 @@ class TournamentController:
             number_of_rounds,
         )
         self.tournaments.append(tournament)
-        save_tournament(tournament, f"{tournament.name}.json")
+        save_tournament(tournament, filename)
         return tournament
 
     def list_tournament_files(self):
         """List saved tournament files."""
-        folder = "data/tournaments"
-
-        if not os.path.exists(folder):
+        if not TOURNAMENTS_FOLDER.exists():
             return []
 
         return sorted(
-            filename
-            for filename in os.listdir(folder)
-            if filename.endswith(".json")
+            path.name
+            for path in TOURNAMENTS_FOLDER.iterdir()
+            if path.is_file() and path.suffix == ".json"
         )
 
     def list_saved_tournaments(self):

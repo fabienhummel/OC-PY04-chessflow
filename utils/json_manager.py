@@ -1,57 +1,89 @@
 """Manage JSON data for players and tournaments."""
 
 import json
-import os
+from pathlib import Path
 
 from models.player import Player
 from models.tournament import Tournament
 
 
-PLAYERS_FILE = "data/players.json"
-TOURNAMENTS_FOLDER = "data/tournaments"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DATA_FOLDER = PROJECT_ROOT / "data"
+PLAYERS_FILE = DATA_FOLDER / "players.json"
+TOURNAMENTS_FOLDER = DATA_FOLDER / "tournaments"
 
 
 def load_players():
     """Load all players."""
-    if not os.path.exists(PLAYERS_FILE):
+    if not PLAYERS_FILE.exists():
         return []
 
-    with open(PLAYERS_FILE, "r", encoding="utf-8") as file:
-        data = json.load(file)
+    if PLAYERS_FILE.stat().st_size == 0:
+        raise ValueError("The players JSON file is empty.")
 
-    return [Player.from_dict(player) for player in data]
+    try:
+        with PLAYERS_FILE.open("r", encoding="utf-8") as file:
+            data = json.load(file)
+    except json.JSONDecodeError:
+        raise ValueError("The players JSON file contains invalid JSON.") from None
+
+    if not isinstance(data, list):
+        raise ValueError("The players JSON file must contain a list.")
+
+    try:
+        return [Player.from_dict(player) for player in data]
+    except (KeyError, TypeError, ValueError) as error:
+        raise ValueError(f"The players JSON data is invalid: {error}") from None
 
 
 def save_players(players):
     """Save all players."""
     data = [player.to_dict() for player in players]
+    PLAYERS_FILE.parent.mkdir(parents=True, exist_ok=True)
 
-    with open(PLAYERS_FILE, "w", encoding="utf-8") as file:
+    with PLAYERS_FILE.open("w", encoding="utf-8") as file:
         json.dump(data, file, indent=4, ensure_ascii=False)
 
 
 def load_tournament(filename):
     """Load one tournament."""
-    path = os.path.join(TOURNAMENTS_FOLDER, filename)
+    path = TOURNAMENTS_FOLDER / filename
 
-    with open(path, "r", encoding="utf-8") as file:
-        data = json.load(file)
+    if not path.exists():
+        raise ValueError(f"Tournament file not found: {filename}")
 
-    return Tournament.from_dict(data)
+    if path.stat().st_size == 0:
+        raise ValueError(f"Tournament file is empty: {filename}")
+
+    try:
+        with path.open("r", encoding="utf-8") as file:
+            data = json.load(file)
+    except json.JSONDecodeError:
+        raise ValueError(f"Tournament file contains invalid JSON: {filename}") from None
+
+    if not isinstance(data, dict):
+        raise ValueError(f"Tournament JSON data is invalid: {filename}")
+
+    try:
+        return Tournament.from_dict(data)
+    except (KeyError, TypeError, ValueError) as error:
+        raise ValueError(
+            f"Tournament JSON data is invalid in {filename}: {error}"
+        ) from None
 
 
 def save_tournament(tournament, filename):
     """Save one tournament."""
-    os.makedirs(TOURNAMENTS_FOLDER, exist_ok=True)
-    path = os.path.join(TOURNAMENTS_FOLDER, filename)
+    TOURNAMENTS_FOLDER.mkdir(parents=True, exist_ok=True)
+    path = TOURNAMENTS_FOLDER / filename
 
-    with open(path, "w", encoding="utf-8") as file:
+    with path.open("w", encoding="utf-8") as file:
         json.dump(tournament.to_dict(), file, indent=4, ensure_ascii=False)
 
 
 def delete_tournament(filename):
     """Delete one tournament file."""
-    path = os.path.join(TOURNAMENTS_FOLDER, filename)
+    path = TOURNAMENTS_FOLDER / filename
 
-    if os.path.exists(path):
-        os.remove(path)
+    if path.exists():
+        path.unlink()
