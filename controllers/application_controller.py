@@ -45,7 +45,12 @@ class ApplicationController:
 
             if choice == "1":
                 player_data = self.player_view.get_player_data()
-                self.player_controller.create_player(*player_data)
+
+                try:
+                    self.player_controller.create_player(*player_data)
+                except ValueError as error:
+                    print(error)
+
             elif choice == "2":
                 players = self.player_controller.list_players()
                 self.player_view.display_players(players)
@@ -62,7 +67,13 @@ class ApplicationController:
                     continue
 
                 player_data = self.player_view.get_updated_player_data(player)
-                self.player_controller.update_player(player, *player_data)
+
+                try:
+                    self.player_controller.update_player(player, *player_data)
+                except ValueError as error:
+                    print(error)
+                    continue
+
                 self.player_view.display_player(player)
             elif choice == "5":
                 national_id = self.player_view.get_national_id()
@@ -177,10 +188,15 @@ class ApplicationController:
                     print("Player not found.")
                     continue
 
-                self.tournament_controller.add_player(
-                    self.current_tournament,
-                    player,
-                )
+                try:
+                    self.tournament_controller.add_player(
+                        self.current_tournament,
+                        player,
+                    )
+                except ValueError as error:
+                    print(error)
+                    continue
+
                 print("Player added to tournament.")
             elif choice == "0":
                 break
