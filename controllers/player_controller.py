@@ -21,8 +21,14 @@ class PlayerController:
         return player
 
     def list_players(self):
-        """List all players."""
-        return self.players
+        """List all players in alphabetical order."""
+        return sorted(
+            self.players,
+            key=lambda player: (
+                player.last_name.lower(),
+                player.first_name.lower(),
+            ),
+        )
 
     def find_player(self, national_id):
         """Find a player by national chess ID."""
