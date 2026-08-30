@@ -1,5 +1,5 @@
 @startuml
-title ChessFlow — Diagramme de cas d'utilisation
+title ChessFlow — Diagramme de cas d'utilisation (version livrée)
 
 left to right direction
 skinparam backgroundColor #FFFFFF
@@ -21,68 +21,88 @@ actor "Organisateur du tournoi" as Organizer
 
 rectangle "ChessFlow" {
   package "Registre des joueurs" {
-    usecase "Gérer le registre\ndes joueurs" as UC_ManagePlayers
     usecase "Ajouter un joueur" as UC_AddPlayer
-    usecase "Consulter les joueurs\npar ordre alphabétique" as UC_ListPlayers
+    usecase "Lister les joueurs" as UC_ListPlayers
+    usecase "Rechercher un joueur" as UC_SearchPlayer
+    usecase "Modifier un joueur" as UC_EditPlayer
+    usecase "Supprimer un joueur" as UC_DeletePlayer
   }
 
   package "Gestion du tournoi" {
-    usecase "Gérer un tournoi" as UC_ManageTournament
     usecase "Créer un tournoi" as UC_CreateTournament
-    usecase "Sélectionner un nombre pair\nde participants" as UC_SelectPlayers
-    usecase "Démarrer ou reprendre\nun tournoi" as UC_StartResume
-    usecase "Démarrer une ronde" as UC_StartRound
+    usecase "Lister les tournois\nenregistrés" as UC_ListTournamentFiles
+    usecase "Charger un tournoi" as UC_LoadTournament
+    usecase "Lister les participants" as UC_ListTournamentPlayers
+    usecase "Ajouter un participant\navant Round 1" as UC_AddTournamentPlayer
+    usecase "Lister les rondes" as UC_ListRounds
+    usecase "Créer la ronde suivante" as UC_CreateRound
     usecase "Générer les appariements" as UC_Pairings
-    usecase "Saisir les résultats\ndes matchs" as UC_Results
-    usecase "Clôturer une ronde" as UC_CloseRound
-    usecase "Clôturer le tournoi" as UC_CloseTournament
+    usecase "Saisir ou modifier\nun résultat" as UC_Results
+    usecase "Clôturer la ronde\nen cours" as UC_CloseRound
+    usecase "Afficher le classement" as UC_Ranking
   }
 
-  package "Consultation et rapports" {
-    usecase "Consulter les rapports" as UC_Reports
-    usecase "Consulter les tournois" as UC_ListTournaments
-    usecase "Consulter les informations\nd'un tournoi" as UC_TournamentDetails
-    usecase "Consulter ses participants" as UC_TournamentPlayers
-    usecase "Consulter ses rondes\net ses matchs" as UC_RoundsMatches
+  package "Rapports" {
+    usecase "Rapport des joueurs" as UC_ReportPlayers
+    usecase "Rapport des tournois" as UC_ReportTournaments
+    usecase "Détail d'un tournoi" as UC_ReportDetails
+    usecase "Participants d'un tournoi" as UC_ReportTournamentPlayers
+    usecase "Rondes et matchs" as UC_ReportRounds
+    usecase "Classement d'un tournoi" as UC_ReportRanking
   }
 
-  usecase "Sauvegarder automatiquement\nl'état validé" as UC_Save
+  usecase "Sauvegarder les\ndonnées validées" as UC_Save
 }
 
-Organizer --> UC_ManagePlayers
-Organizer --> UC_ManageTournament
-Organizer --> UC_Reports
+Organizer --> UC_AddPlayer
+Organizer --> UC_ListPlayers
+Organizer --> UC_SearchPlayer
+Organizer --> UC_EditPlayer
+Organizer --> UC_DeletePlayer
 
-UC_ManagePlayers .> UC_AddPlayer : <<include>>
-UC_ManagePlayers .> UC_ListPlayers : <<include>>
-UC_ManageTournament .> UC_CreateTournament : <<include>>
-UC_ManageTournament .> UC_SelectPlayers : <<include>>
-UC_ManageTournament .> UC_StartResume : <<include>>
-UC_ManageTournament .> UC_StartRound : <<include>>
-UC_ManageTournament .> UC_Results : <<include>>
-UC_ManageTournament .> UC_CloseRound : <<include>>
-UC_ManageTournament .> UC_CloseTournament : <<include>>
-UC_Reports .> UC_ListTournaments : <<include>>
-UC_Reports .> UC_TournamentDetails : <<include>>
-UC_Reports .> UC_TournamentPlayers : <<include>>
-UC_Reports .> UC_RoundsMatches : <<include>>
+Organizer --> UC_CreateTournament
+Organizer --> UC_ListTournamentFiles
+Organizer --> UC_LoadTournament
+Organizer --> UC_ListTournamentPlayers
+Organizer --> UC_AddTournamentPlayer
+Organizer --> UC_ListRounds
+Organizer --> UC_CreateRound
+Organizer --> UC_Results
+Organizer --> UC_CloseRound
+Organizer --> UC_Ranking
 
-UC_StartRound .> UC_Pairings : <<include>>
+Organizer --> UC_ReportPlayers
+Organizer --> UC_ReportTournaments
+Organizer --> UC_ReportDetails
+Organizer --> UC_ReportTournamentPlayers
+Organizer --> UC_ReportRounds
+Organizer --> UC_ReportRanking
+
+UC_CreateRound .> UC_Pairings : <<include>>
+
+UC_AddPlayer .> UC_Save : <<include>>
+UC_EditPlayer .> UC_Save : <<include>>
+UC_DeletePlayer .> UC_Save : <<include>>
 UC_CreateTournament .> UC_Save : <<include>>
-UC_SelectPlayers .> UC_Save : <<include>>
+UC_AddTournamentPlayer .> UC_Save : <<include>>
+UC_CreateRound .> UC_Save : <<include>>
 UC_Results .> UC_Save : <<include>>
 UC_CloseRound .> UC_Save : <<include>>
-UC_CloseTournament .> UC_Save : <<include>>
 
-note bottom of UC_SelectPlayers
-  Aucun joueur exempt : le démarrage
-  exige un nombre pair de participants.
+note bottom of UC_AddTournamentPlayer
+  L'ajout de participants est interdit
+  après la création de Round 1.
 end note
 
-note bottom of UC_Pairings
-  Première ronde : aléatoire.
+note bottom of UC_CreateRound
+  Nombre de participants pair.
+  Première ronde : mélange aléatoire.
   Rondes suivantes : score décroissant,
-  ex æquo aléatoires et revanche évitée
-  autant que possible.
+  revanche évitée autant que possible.
+end note
+
+note bottom of UC_Ranking
+  Les scores sont calculés dynamiquement
+  depuis les résultats des matchs.
 end note
 @enduml
