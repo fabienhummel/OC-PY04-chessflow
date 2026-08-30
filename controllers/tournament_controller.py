@@ -71,6 +71,10 @@ class TournamentController:
 
     def add_player(self, tournament, player):
         """Add a player to a tournament."""
+        for existing_player in tournament.players:
+            if existing_player.national_id == player.national_id:
+                raise ValueError("This player is already registered in the tournament.")
+
         tournament.add_player(player)
         save_tournament(tournament, f"{tournament.name}.json")
 
