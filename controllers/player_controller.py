@@ -12,6 +12,10 @@ class PlayerController:
     def create_player(self, last_name, first_name, birth_date, national_id):
         """Create a player."""
         player = Player(last_name, first_name, birth_date, national_id)
+
+        if self.find_player(player.national_id) is not None:
+            raise ValueError("A player with this national chess ID already exists.")
+
         self.players.append(player)
         save_players(self.players)
         return player
@@ -22,8 +26,10 @@ class PlayerController:
 
     def find_player(self, national_id):
         """Find a player by national chess ID."""
+        normalized_id = national_id.strip().upper()
+
         for player in self.players:
-            if player.national_id == national_id:
+            if player.national_id == normalized_id:
                 return player
 
         return None
@@ -37,10 +43,21 @@ class PlayerController:
         national_id,
     ):
         """Update a player."""
+        normalized_id = Player.validate_national_id(national_id)
+
+        for existing_player in self.players:
+            if (
+                existing_player is not player
+                and existing_player.national_id == normalized_id
+            ):
+                raise ValueError(
+                    "A player with this national chess ID already exists."
+                )
+
         player.last_name = last_name
         player.first_name = first_name
         player.birth_date = birth_date
-        player.national_id = national_id
+        player.national_id = normalized_id
         save_players(self.players)
 
     def delete_player(self, player):
