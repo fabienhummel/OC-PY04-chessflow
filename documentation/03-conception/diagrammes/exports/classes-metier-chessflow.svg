@@ -1,1 +1,187 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" style="width:595px;height:1148px;background:#FFFFFF;" width="595px" height="1148px" viewBox="0 0 595 1148" zoomAndPan="magnify" preserveAspectRatio="none" contentStyleType="text/css"><?plantuml 1.2026.7beta3?><defs/><g><g class="title" data-source-line="1"><text x="168.145" y="20.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="256.9" font-weight="700" font-family="Arial">ChessFlow — Diagramme de classes métier</text></g><!--class Player--><g class="entity" data-qualified-name="Player" id="ent0001" data-source-line="15"><rect x="21.74" y="901" width="153.4" height="146" fill="#F8FAFC" style="stroke:#34536D;stroke-width:0.5;" rx="2.5" ry="2.5"/><rect x="21.74" y="901" width="153.4" height="32" fill="#DCEAF5" style="stroke:#DCEAF5;stroke-width:0.5;" rx="2.5" ry="2.5"/><rect x="21.74" y="930.5" width="153.4" height="2.5" fill="#DCEAF5" style="stroke:#DCEAF5;stroke-width:0.5;"/><rect x="21.74" y="901" width="153.4" height="146" fill="none" style="stroke:#34536D;stroke-width:0.5;" rx="2.5" ry="2.5"/><ellipse cx="74.3275" cy="917" rx="11" ry="11" fill="#ADD1B2" style="stroke:#181818;stroke-width:1;"/><text x="69.3275" y="922" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="0" font-family="monospace">C</text><text x="94.8275" y="920.8889" fill="#172B3A" font-size="14" lengthAdjust="spacing" textLength="39.725" font-family="Arial">Player</text><line x1="22.74" y1="933" x2="174.14" y2="933" style="stroke:#34536D;stroke-width:0.5;"/><text x="27.74" y="947.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="91.7875" font-family="Arial">-national_id: str</text><text x="27.74" y="961.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="88.55" font-family="Arial">-last_name: str</text><text x="27.74" y="975.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="89.25" font-family="Arial">-first_name: str</text><text x="27.74" y="989.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="97.9125" font-family="Arial">-birth_date: date</text><line x1="22.74" y1="997" x2="174.14" y2="997" style="stroke:#34536D;stroke-width:0.5;"/><text x="27.74" y="1011.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="141.4" font-family="Arial">+validate_national_id()</text><text x="27.74" y="1025.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="58.7125" font-family="Arial">+to_dict()</text><text x="27.74" y="1039.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="102.2" font-family="Arial">+from_dict(data)</text></g><!--class Tournament--><g class="entity" data-qualified-name="Tournament" id="ent0002" data-source-line="25"><rect x="7" y="42" width="182.8875" height="286" fill="#F8FAFC" style="stroke:#34536D;stroke-width:0.5;" rx="2.5" ry="2.5"/><rect x="7" y="42" width="182.8875" height="32" fill="#DCEAF5" style="stroke:#DCEAF5;stroke-width:0.5;" rx="2.5" ry="2.5"/><rect x="7" y="71.5" width="182.8875" height="2.5" fill="#DCEAF5" style="stroke:#DCEAF5;stroke-width:0.5;"/><rect x="7" y="42" width="182.8875" height="286" fill="none" style="stroke:#34536D;stroke-width:0.5;" rx="2.5" ry="2.5"/><ellipse cx="56.4813" cy="58" rx="11" ry="11" fill="#ADD1B2" style="stroke:#181818;stroke-width:1;"/><text x="51.4813" y="63" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="0" font-family="monospace">C</text><text x="76.9813" y="61.8889" fill="#172B3A" font-size="14" lengthAdjust="spacing" textLength="75.425" font-family="Arial">Tournament</text><line x1="8" y1="74" x2="188.8875" y2="74" style="stroke:#34536D;stroke-width:0.5;"/><text x="13" y="88.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="58.975" font-family="Arial">-name: str</text><text x="13" y="102.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="72.275" font-family="Arial">-location: str</text><text x="13" y="116.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="97.825" font-family="Arial">-start_date: date</text><text x="13" y="130.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="94.0625" font-family="Arial">-end_date: date</text><text x="13" y="144.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="156.7125" font-family="Arial">-number_of_rounds: int = 4</text><text x="13" y="158.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="91.7" font-family="Arial">-description: str</text><text x="13" y="172.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="144.6375" font-family="Arial">-participants: list[Player]</text><text x="13" y="186.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="170.8875" font-family="Arial">-player_scores: dict[str, float]</text><text x="13" y="200.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="117.425" font-family="Arial">-rounds: list[Round]</text><text x="13" y="214.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="61.25" font-family="Arial">-status: str</text><line x1="8" y1="222" x2="188.8875" y2="222" style="stroke:#34536D;stroke-width:0.5;"/><text x="13" y="236.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="151.375" font-family="Arial">+add_participant(player)</text><text x="13" y="250.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="74.9875" font-family="Arial">+can_start()</text><text x="13" y="264.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="88.2" font-family="Arial">+start_round()</text><text x="13" y="278.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="109.2875" font-family="Arial">+update_scores()</text><text x="13" y="292.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="83.7375" font-family="Arial">+is_finished()</text><text x="13" y="306.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="58.7125" font-family="Arial">+to_dict()</text><text x="13" y="320.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="102.2" font-family="Arial">+from_dict(data)</text></g><!--class Round--><g class="entity" data-qualified-name="Round" id="ent0003" data-source-line="45"><rect x="129.39" y="403" width="196.1" height="174" fill="#F8FAFC" style="stroke:#34536D;stroke-width:0.5;" rx="2.5" ry="2.5"/><rect x="129.39" y="403" width="196.1" height="32" fill="#DCEAF5" style="stroke:#DCEAF5;stroke-width:0.5;" rx="2.5" ry="2.5"/><rect x="129.39" y="432.5" width="196.1" height="2.5" fill="#DCEAF5" style="stroke:#DCEAF5;stroke-width:0.5;"/><rect x="129.39" y="403" width="196.1" height="174" fill="none" style="stroke:#34536D;stroke-width:0.5;" rx="2.5" ry="2.5"/><ellipse cx="202.54" cy="419" rx="11" ry="11" fill="#ADD1B2" style="stroke:#181818;stroke-width:1;"/><text x="197.54" y="424" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="0" font-family="monospace">C</text><text x="223.04" y="422.8889" fill="#172B3A" font-size="14" lengthAdjust="spacing" textLength="41.3" font-family="Arial">Round</text><line x1="130.39" y1="435" x2="324.49" y2="435" style="stroke:#34536D;stroke-width:0.5;"/><text x="135.39" y="449.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="58.975" font-family="Arial">-name: str</text><text x="135.39" y="463.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="150.675" font-family="Arial">-start_datetime: datetime</text><text x="135.39" y="477.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="184.1" font-family="Arial">-end_datetime: datetime | None</text><text x="135.39" y="491.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="124.25" font-family="Arial">-matches: list[Match]</text><line x1="130.39" y1="499" x2="324.49" y2="499" style="stroke:#34536D;stroke-width:0.5;"/><text x="135.39" y="513.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="124.775" font-family="Arial">+add_match(match)</text><text x="135.39" y="527.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="92.225" font-family="Arial">+is_complete()</text><text x="135.39" y="541.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="50.225" font-family="Arial">+close()</text><text x="135.39" y="555.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="58.7125" font-family="Arial">+to_dict()</text><text x="135.39" y="569.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="102.2" font-family="Arial">+from_dict(data)</text></g><!--class Match--><g class="entity" data-qualified-name="Match" id="ent0004" data-source-line="57"><rect x="122.87" y="652" width="223.1375" height="174" fill="#F8FAFC" style="stroke:#34536D;stroke-width:0.5;" rx="2.5" ry="2.5"/><rect x="122.87" y="652" width="223.1375" height="32" fill="#DCEAF5" style="stroke:#DCEAF5;stroke-width:0.5;" rx="2.5" ry="2.5"/><rect x="122.87" y="681.5" width="223.1375" height="2.5" fill="#DCEAF5" style="stroke:#DCEAF5;stroke-width:0.5;"/><rect x="122.87" y="652" width="223.1375" height="174" fill="none" style="stroke:#34536D;stroke-width:0.5;" rx="2.5" ry="2.5"/><ellipse cx="211.1575" cy="668" rx="11" ry="11" fill="#ADD1B2" style="stroke:#181818;stroke-width:1;"/><text x="206.1575" y="673" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="0" font-family="monospace">C</text><text x="231.6575" y="671.8889" fill="#172B3A" font-size="14" lengthAdjust="spacing" textLength="38.0625" font-family="Arial">Match</text><line x1="123.87" y1="684" x2="345.0075" y2="684" style="stroke:#34536D;stroke-width:0.5;"/><text x="128.87" y="698.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="117.5125" font-family="Arial">-player_one: Player</text><text x="128.87" y="712.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="115.9375" font-family="Arial">-player_two: Player</text><text x="128.87" y="726.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="137.4625" font-family="Arial">-score_one: float | None</text><text x="128.87" y="740.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="135.8875" font-family="Arial">-score_two: float | None</text><line x1="123.87" y1="748" x2="345.0075" y2="748" style="stroke:#34536D;stroke-width:0.5;"/><text x="128.87" y="762.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="211.1375" font-family="Arial">+set_result(score_one, score_two)</text><text x="128.87" y="776.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="82.075" font-family="Arial">+has_result()</text><text x="128.87" y="790.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="106.3125" font-family="Arial">+involves(player)</text><text x="128.87" y="804.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="58.7125" font-family="Arial">+to_dict()</text><text x="128.87" y="818.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="102.2" font-family="Arial">+from_dict(data)</text></g><g class="entity" data-qualified-name="GMN10" id="ent0011" data-source-line="76"><path d="M210.34,949.5 L210.34,970 L175.22,974 L210.34,978 L210.34,998.5 A0,0 0 0 0 210.34,998.5 L418.54,998.5 A0,0 0 0 0 418.54,998.5 L418.54,959.5 L408.54,949.5 L210.34,949.5 A0,0 0 0 0 210.34,949.5" style="stroke:#181818;stroke-width:0.5;" fill="#FEFFDD"/><path d="M408.54,949.5 L408.54,959.5 L418.54,959.5 L408.54,949.5" style="stroke:#181818;stroke-width:0.5;" fill="#FEFFDD"/><text x="216.34" y="964.6111" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="185.0063" font-family="Arial">Le joueur existe indépendamment</text><text x="216.34" y="977.6111" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="158.1938" font-family="Arial">de tout tournoi. Son identifiant</text><text x="216.34" y="990.6111" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="187.2" font-family="Arial">national est unique dans le registre.</text></g><g class="entity" data-qualified-name="GMN13" id="ent0014" data-source-line="82"><path d="M224.67,160.5 L224.67,181 L190.32,185 L224.67,189 L224.67,209.5 A0,0 0 0 0 224.67,209.5 L452.2075,209.5 A0,0 0 0 0 452.2075,209.5 L452.2075,170.5 L442.2075,160.5 L224.67,160.5 A0,0 0 0 0 224.67,160.5" style="stroke:#181818;stroke-width:0.5;" fill="#FEFFDD"/><path d="M442.2075,160.5 L442.2075,170.5 L452.2075,170.5 L442.2075,160.5" style="stroke:#181818;stroke-width:0.5;" fill="#FEFFDD"/><text x="230.67" y="175.6111" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="182" font-family="Arial">Les scores sont propres au tournoi</text><text x="230.67" y="188.6111" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="184.6813" font-family="Arial">et indexés par l'identifiant national.</text><text x="230.67" y="201.6111" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="206.5375" font-family="Arial">Une ronde est créée progressivement.</text></g><g class="entity" data-qualified-name="GMN16" id="ent0017" data-source-line="88"><path d="M453.69,956 L453.69,992 L585.19,992 L585.19,966 L575.19,956 L453.69,956" style="stroke:#181818;stroke-width:0.5;" fill="#FEFFDD"/><path d="M575.19,956 L575.19,966 L585.19,966 L575.19,956" style="stroke:#181818;stroke-width:1;" fill="#FEFFDD"/><text x="459.69" y="971.1111" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="110.5" font-family="Arial">Résultats autorisés :</text><text x="459.69" y="984.1111" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="99.5313" font-family="Arial">1-0, 0-1 ou 0,5-0,5.</text></g><!--reverse link Tournament to Player--><g class="link" data-entity-1="ent0002" data-entity-2="ent0001" id="lnk5" data-source-line="69" data-link-type="aggregation"><path d="M98.44,340.06 C98.44,508.53 98.44,770.79 98.44,900.56" style="stroke:#181818;stroke-width:1;" fill="none" id="Tournament-backto-Player" codeLine="69"/><polygon points="98.44,328.06,94.44,334.06,98.44,340.06,102.44,334.06,98.44,328.06" fill="none" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text x="99.44" y="618.1111" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="66.4625" font-family="Arial">participants</text><text x="78.9608" y="345.8828" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="19.4188" font-family="Arial">0..*</text><text x="39.782" y="890.0518" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="56.225" font-family="Arial">2..* {even}</text></g><!--reverse link Tournament to Round--><g class="link" data-entity-1="ent0002" data-entity-2="ent0003" id="lnk6" data-source-line="70" data-link-type="composition"><path d="M163.6773,339.2225 C174.5373,364.7525 180.86,379.59 190.79,402.91" style="stroke:#181818;stroke-width:1;" fill="none" id="Tournament-backto-Round" codeLine="70"/><polygon points="158.98,328.18,157.6478,335.267,163.6773,339.2225,165.0094,332.1355,158.98,328.18" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text x="175.5" y="369.1111" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="39.7312" font-family="Arial">rounds</text><text x="154.9269" y="346.009" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="7.2312" font-family="Arial">1</text><text x="167.842" y="391.9782" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="19.4188" font-family="Arial">0..*</text></g><!--reverse link Round to Match--><g class="link" data-entity-1="ent0003" data-entity-2="ent0004" id="lnk7" data-source-line="71" data-link-type="composition"><path d="M230.2289,589.3852 C230.9089,613.4552 231.31,627.6 232,651.66" style="stroke:#181818;stroke-width:1;" fill="none" id="Round-backto-Match" codeLine="71"/><polygon points="229.89,577.39,226.061,583.5006,230.2289,589.3852,234.0578,583.2746,229.89,577.39" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text x="232.15" y="618.1111" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="49.075" font-family="Arial">matches</text><text x="222.8155" y="594.983" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="7.2312" font-family="Arial">1</text><text x="212.0287" y="641" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="19.4188" font-family="Arial">1..*</text></g><!--link Match to Player--><g class="link" data-entity-1="ent0004" data-entity-2="ent0001" id="lnk8" data-source-line="72" data-link-type="dependency"><path d="M144.75,826.2 C137.52,835.76 130.91,845.76 125.44,856 C118.13,869.7 114.0158,880.4851 110.1158,895.7751" style="stroke:#181818;stroke-width:1;" fill="none" id="Match-to-Player" codeLine="72"/><polygon points="108.88,900.62,114.9803,892.8878,110.1158,895.7751,107.2285,890.9106,108.88,900.62" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text x="126.44" y="867.1111" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="64.35" font-family="Arial">player_one</text><text x="117.5533" y="844.0706" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="19.4188" font-family="Arial">0..*</text><text x="102.5525" y="890.1175" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="7.2312" font-family="Arial">1</text></g><!--link Match to Player--><g class="link" data-entity-1="ent0004" data-entity-2="ent0001" id="lnk9" data-source-line="73" data-link-type="dependency"><path d="M215.09,826.28 C209.88,841.71 203.41,857.24 195.44,871 C189.57,881.15 185.623,887.1914 177.993,896.6314" style="stroke:#181818;stroke-width:1;" fill="none" id="Match-to-Player-1" codeLine="73"/><polygon points="174.85,900.52,183.6183,896.0349,177.993,896.6314,177.3966,891.0061,174.85,900.52" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text x="203.34" y="867.1111" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="62.8875" font-family="Arial">player_two</text><text x="193.7183" y="844.1573" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="19.4188" font-family="Arial">0..*</text><text x="174.8103" y="890.008" fill="#000000" font-size="13" lengthAdjust="spacing" textLength="7.2312" font-family="Arial">1</text></g><!--link Match to GMN16--><g class="link" data-entity-1="ent0004" data-entity-2="ent0017" id="lnk18" data-source-line="88" data-link-type="association"><path d="M344.67,826.49 C374.64,850.38 406.96,876.48 436.44,901 C458.44,919.3 483.16,940.87 499.85,955.6" style="stroke:#181818;stroke-width:1;stroke-dasharray:7,7;" fill="none" id="Match-GMN16"/></g><g class="legend" data-source-line="92"><rect x="12" y="1068" width="288.175" height="66" fill="none" style="stroke:#000000;stroke-width:1;" rx="7.5" ry="7.5"/><text x="17" y="1083.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="245.0875" font-family="Arial">o--  agrégation : le joueur reste indépendant</text><ellipse cx="22.5" cy="1093.5" rx="2.5" ry="2.5" fill="#000000"/><text x="29" y="1097.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="266.175" font-family="Arial">--  composition : le cycle de vie dépend du parent</text><text x="17" y="1111.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="168.525" font-family="Arial">-->  association vers un joueur</text><text x="17" y="1125.8889" fill="#000000" font-size="14" lengthAdjust="spacing" textLength="258.825" font-family="Arial">Aucune classe abstraite ni relation d'héritage</text></g></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.42.4 (0)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg width="1196pt" height="1107pt"
+ viewBox="0.00 0.00 1196.00 1107.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 1103)">
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-1103 1192,-1103 1192,4 -4,4"/>
+<text text-anchor="middle" x="594" y="-1079" font-family="Arial" font-size="20.00">ChessFlow — Diagramme de classes métier (version livrée)</text>
+<!-- Player -->
+<g id="node1" class="node">
+<title>Player</title>
+<polygon fill="#dceaf5" stroke="transparent" points="654,-813 654,-836 925,-836 925,-813 654,-813"/>
+<polygon fill="none" stroke="#34536d" points="654,-813 654,-836 925,-836 925,-813 654,-813"/>
+<text text-anchor="start" x="767.5" y="-821.8" font-family="Arial" font-weight="bold" font-size="14.00">Player</text>
+<polygon fill="#f8fafc" stroke="transparent" points="654,-724 654,-813 925,-813 925,-724 654,-724"/>
+<polygon fill="none" stroke="#34536d" points="654,-724 654,-813 925,-813 925,-724 654,-724"/>
+<text text-anchor="start" x="660" y="-795.8" font-family="Arial" font-size="14.00">- last_name: str</text>
+<text text-anchor="start" x="660" y="-778.8" font-family="Arial" font-size="14.00">- first_name: str</text>
+<text text-anchor="start" x="660" y="-761.8" font-family="Arial" font-size="14.00">- birth_date: str</text>
+<text text-anchor="start" x="660" y="-744.8" font-family="Arial" font-size="14.00">- national_id: str</text>
+<polygon fill="#f8fafc" stroke="transparent" points="654,-611 654,-724 925,-724 925,-611 654,-611"/>
+<polygon fill="none" stroke="#34536d" points="654,-611 654,-724 925,-724 925,-611 654,-611"/>
+<text text-anchor="start" x="660" y="-706.8" font-family="Arial" font-size="14.00">+ validate_required_text(...)</text>
+<text text-anchor="start" x="660" y="-689.8" font-family="Arial" font-size="14.00">+ validate_birth_date(...)</text>
+<text text-anchor="start" x="660" y="-672.8" font-family="Arial" font-size="14.00">+ validate_national_id(...)</text>
+<text text-anchor="start" x="660" y="-655.8" font-family="Arial" font-size="14.00">+ to_dict()</text>
+<text text-anchor="start" x="660" y="-638.8" font-family="Arial" font-size="14.00">+ from_dict(data)</text>
+</g>
+<!-- Tournament -->
+<g id="node2" class="node">
+<title>Tournament</title>
+<polygon fill="#dceaf5" stroke="transparent" points="70,-481 70,-504 392,-504 392,-481 70,-481"/>
+<polygon fill="none" stroke="#34536d" points="70,-481 70,-504 392,-504 392,-481 70,-481"/>
+<text text-anchor="start" x="193.5" y="-489.8" font-family="Arial" font-weight="bold" font-size="14.00">Tournament</text>
+<polygon fill="#f8fafc" stroke="transparent" points="70,-290 70,-481 392,-481 392,-290 70,-290"/>
+<polygon fill="none" stroke="#34536d" points="70,-290 70,-481 392,-481 392,-290 70,-290"/>
+<text text-anchor="start" x="76" y="-463.8" font-family="Arial" font-size="14.00">- name: str</text>
+<text text-anchor="start" x="76" y="-446.8" font-family="Arial" font-size="14.00">- location: str</text>
+<text text-anchor="start" x="76" y="-429.8" font-family="Arial" font-size="14.00">- start_date: str</text>
+<text text-anchor="start" x="76" y="-412.8" font-family="Arial" font-size="14.00">- end_date: str</text>
+<text text-anchor="start" x="76" y="-395.8" font-family="Arial" font-size="14.00">- description: str</text>
+<text text-anchor="start" x="76" y="-378.8" font-family="Arial" font-size="14.00">- number_of_rounds: int</text>
+<text text-anchor="start" x="76" y="-361.8" font-family="Arial" font-size="14.00">- current_round: int</text>
+<text text-anchor="start" x="76" y="-344.8" font-family="Arial" font-size="14.00">- players: list[Player]</text>
+<text text-anchor="start" x="76" y="-327.8" font-family="Arial" font-size="14.00">- rounds: list[Round]</text>
+<polygon fill="#f8fafc" stroke="transparent" points="70,-126 70,-290 392,-290 392,-126 70,-126"/>
+<polygon fill="none" stroke="#34536d" points="70,-126 70,-290 392,-290 392,-126 70,-126"/>
+<text text-anchor="start" x="76" y="-272.8" font-family="Arial" font-size="14.00">+ validate_required_text(...)</text>
+<text text-anchor="start" x="76" y="-255.8" font-family="Arial" font-size="14.00">+ validate_date(...)</text>
+<text text-anchor="start" x="76" y="-238.8" font-family="Arial" font-size="14.00">+ validate_number_of_rounds(...)</text>
+<text text-anchor="start" x="76" y="-221.8" font-family="Arial" font-size="14.00">+ add_player(player)</text>
+<text text-anchor="start" x="76" y="-204.8" font-family="Arial" font-size="14.00">+ add_round(round)</text>
+<text text-anchor="start" x="76" y="-187.8" font-family="Arial" font-size="14.00">+ to_dict()</text>
+<text text-anchor="start" x="76" y="-170.8" font-family="Arial" font-size="14.00">+ from_dict(data)</text>
+</g>
+<!-- Round -->
+<g id="node3" class="node">
+<title>Round</title>
+<polygon fill="#dceaf5" stroke="transparent" points="490,-417 490,-440 817,-440 817,-417 490,-417"/>
+<polygon fill="none" stroke="#34536d" points="490,-417 490,-440 817,-440 817,-417 490,-417"/>
+<text text-anchor="start" x="632" y="-425.8" font-family="Arial" font-weight="bold" font-size="14.00">Round</text>
+<polygon fill="#f8fafc" stroke="transparent" points="490,-311 490,-417 817,-417 817,-311 490,-311"/>
+<polygon fill="none" stroke="#34536d" points="490,-311 490,-417 817,-417 817,-311 490,-311"/>
+<text text-anchor="start" x="496" y="-399.8" font-family="Arial" font-size="14.00">- name: str</text>
+<text text-anchor="start" x="496" y="-382.8" font-family="Arial" font-size="14.00">- matches: list[Match]</text>
+<text text-anchor="start" x="496" y="-365.8" font-family="Arial" font-size="14.00">- start_datetime: datetime | None</text>
+<text text-anchor="start" x="496" y="-348.8" font-family="Arial" font-size="14.00">- end_datetime: datetime | None</text>
+<polygon fill="#f8fafc" stroke="transparent" points="490,-198 490,-311 817,-311 817,-198 490,-198"/>
+<polygon fill="none" stroke="#34536d" points="490,-198 490,-311 817,-311 817,-198 490,-198"/>
+<text text-anchor="start" x="496" y="-293.8" font-family="Arial" font-size="14.00">+ add_match(match)</text>
+<text text-anchor="start" x="496" y="-276.8" font-family="Arial" font-size="14.00">+ close()</text>
+<text text-anchor="start" x="496" y="-259.8" font-family="Arial" font-size="14.00">+ to_dict()</text>
+<text text-anchor="start" x="496" y="-242.8" font-family="Arial" font-size="14.00">+ from_dict(data)</text>
+</g>
+<!-- Match -->
+<g id="node4" class="node">
+<title>Match</title>
+<polygon fill="#dceaf5" stroke="transparent" points="876,-425 876,-448 1150,-448 1150,-425 876,-425"/>
+<polygon fill="none" stroke="#34536d" points="876,-425 876,-448 1150,-448 1150,-425 876,-425"/>
+<text text-anchor="start" x="993" y="-433.8" font-family="Arial" font-weight="bold" font-size="14.00">Match</text>
+<polygon fill="#f8fafc" stroke="transparent" points="876,-302 876,-425 1150,-425 1150,-302 876,-302"/>
+<polygon fill="none" stroke="#34536d" points="876,-302 876,-425 1150,-425 1150,-302 876,-302"/>
+<text text-anchor="start" x="882" y="-407.8" font-family="Arial" font-size="14.00">- pair: tuple[list, list]</text>
+<text text-anchor="start" x="882" y="-390.8" font-family="Arial" font-size="14.00">+ player_one: Player</text>
+<text text-anchor="start" x="882" y="-373.8" font-family="Arial" font-size="14.00">+ player_two: Player</text>
+<text text-anchor="start" x="882" y="-356.8" font-family="Arial" font-size="14.00">+ score_one: float | None</text>
+<text text-anchor="start" x="882" y="-339.8" font-family="Arial" font-size="14.00">+ score_two: float | None</text>
+<polygon fill="#f8fafc" stroke="transparent" points="876,-223 876,-302 1150,-302 1150,-223 876,-223"/>
+<polygon fill="none" stroke="#34536d" points="876,-223 876,-302 1150,-302 1150,-223 876,-223"/>
+<text text-anchor="start" x="882" y="-284.8" font-family="Arial" font-size="14.00">+ set_result(score_one, score_two)</text>
+<text text-anchor="start" x="882" y="-267.8" font-family="Arial" font-size="14.00">+ to_dict()</text>
+<text text-anchor="start" x="882" y="-250.8" font-family="Arial" font-size="14.00">+ from_dict(data)</text>
+</g>
+<!-- Tournament->Player -->
+<g id="edge1" class="edge">
+<title>Tournament->Player</title>
+<path fill="none" stroke="#34536d" d="M393.13,-494.93C468.76,-533.14 559.14,-578.79 633.93,-616.57"/>
+<polygon fill="none" stroke="#34536d" points="642.91,-621.11 635.96,-612.55 638.45,-618.85 634,-616.6 634,-616.6 634,-616.6 638.45,-618.85 632.04,-620.62 642.91,-621.11 642.91,-621.11"/>
+<text text-anchor="middle" x="537" y="-597" font-family="Arial" font-size="10.00" fill="#34536d"> players 0..*</text>
+</g>
+<!-- Tournament->Round -->
+<g id="edge2" class="edge">
+<title>Tournament->Round</title>
+<path fill="none" stroke="#34536d" d="M392.18,-357.25C420.79,-351.28 450.23,-345.14 479.02,-339.14"/>
+<polygon fill="#34536d" stroke="#34536d" points="489.04,-337.05 480.16,-343.5 484.15,-338.07 479.25,-339.09 479.25,-339.09 479.25,-339.09 484.15,-338.07 478.33,-334.69 489.04,-337.05 489.04,-337.05"/>
+<text text-anchor="middle" x="441" y="-352" font-family="Arial" font-size="10.00" fill="#34536d"> rounds 0..*</text>
+</g>
+<!-- Round->Match -->
+<g id="edge3" class="edge">
+<title>Round->Match</title>
+<path fill="none" stroke="#34536d" d="M817.17,-323.44C833.07,-323.04 849.05,-322.65 864.66,-322.27"/>
+<polygon fill="#34536d" stroke="#34536d" points="874.79,-322.02 864.91,-326.77 869.79,-322.14 864.8,-322.27 864.8,-322.27 864.8,-322.27 869.79,-322.14 864.68,-317.77 874.79,-322.02 874.79,-322.02"/>
+<text text-anchor="middle" x="846.5" y="-326" font-family="Arial" font-size="10.00" fill="#34536d"> matches 0..*</text>
+</g>
+<!-- Match->Player -->
+<g id="edge4" class="edge">
+<title>Match->Player</title>
+<path fill="none" stroke="#34536d" d="M919.95,-448.2C889.46,-497.57 855.32,-552.85 829.52,-594.64"/>
+<polygon fill="#34536d" stroke="#34536d" points="824.23,-603.2 825.57,-592.44 826.86,-598.95 829.49,-594.7 829.49,-594.7 829.49,-594.7 826.86,-598.95 833.42,-596.97 824.23,-603.2 824.23,-603.2"/>
+<text text-anchor="middle" x="924.5" y="-538" font-family="Arial" font-size="10.00" fill="#34536d"> pair : 2 joueurs</text>
+</g>
+<!-- note1 -->
+<g id="node5" class="node">
+<title>note1</title>
+<polygon fill="#fffce8" stroke="transparent" points="642.5,-1055 642.5,-974 935.5,-974 935.5,-1055 642.5,-1055"/>
+<polyline fill="none" stroke="#999966" points="642.5,-1055 923.5,-1055 "/>
+<polyline fill="none" stroke="#999966" points="923.5,-1055 935.5,-1043 "/>
+<polyline fill="none" stroke="#999966" points="935.5,-1043 935.5,-974 "/>
+<polyline fill="none" stroke="#999966" points="935.5,-974 642.5,-974 "/>
+<polyline fill="none" stroke="#999966" points="642.5,-974 642.5,-1055 "/>
+<polyline fill="none" stroke="#999966" points="923.5,-1055 923.5,-1043 "/>
+<polyline fill="none" stroke="#999966" points="923.5,-1043 935.5,-1043 "/>
+<text text-anchor="middle" x="789" y="-1039.8" font-family="Arial" font-size="14.00">Player existe indépendamment des tournois.</text>
+<text text-anchor="middle" x="789" y="-1024.8" font-family="Arial" font-size="14.00">L&#39;unicité de national_id dans le registre</text>
+<text text-anchor="middle" x="789" y="-1009.8" font-family="Arial" font-size="14.00">est contrôlée par PlayerController.</text>
+</g>
+<!-- Player->note1 -->
+<g id="edge5" class="edge">
+<title>Player->note1</title>
+<path fill="none" stroke="#34536d" stroke-dasharray="5,2" d="M789,-836.22C789,-882.52 789,-933.39 789,-973.66"/>
+</g>
+<!-- note2 -->
+<g id="node6" class="node">
+<title>note2</title>
+<polygon fill="#fffce8" stroke="transparent" points="0,-81 0,0 462,0 462,-81 0,-81"/>
+<polyline fill="none" stroke="#999966" points="0,-81 450,-81 "/>
+<polyline fill="none" stroke="#999966" points="450,-81 462,-69 "/>
+<polyline fill="none" stroke="#999966" points="462,-69 462,0 "/>
+<polyline fill="none" stroke="#999966" points="462,0 0,0 "/>
+<polyline fill="none" stroke="#999966" points="0,0 0,-81 "/>
+<polyline fill="none" stroke="#999966" points="450,-81 450,-69 "/>
+<polyline fill="none" stroke="#999966" points="450,-69 462,-69 "/>
+<text text-anchor="middle" x="231" y="-65.8" font-family="Arial" font-size="14.00">Tournament ne stocke ni score cumulé</text>
+<text text-anchor="middle" x="231" y="-50.8" font-family="Arial" font-size="14.00">ni statut séparé. Les scores et le classement</text>
+<text text-anchor="middle" x="231" y="-35.8" font-family="Arial" font-size="14.00">sont calculés par TournamentController.</text>
+</g>
+<!-- Tournament->note2 -->
+<g id="edge6" class="edge">
+<title>Tournament->note2</title>
+<path fill="none" stroke="#34536d" stroke-dasharray="5,2" d="M231,-125.91C231,-107.84 231,-92.33 231,-81.17"/>
+</g>
+<!-- note3 -->
+<g id="node7" class="node">
+<title>note3</title>
+<polygon fill="#fffce8" stroke="transparent" points="861.5,-80.5 861.5,-0.5 1164.5,-0.5 1164.5,-80.5 861.5,-80.5"/>
+<polyline fill="none" stroke="#999966" points="861.5,-80.5 1152.5,-80.5 "/>
+<polyline fill="none" stroke="#999966" points="1152.5,-80.5 1164.5,-68.5 "/>
+<polyline fill="none" stroke="#999966" points="1164.5,-68.5 1164.5,-0.5 "/>
+<polyline fill="none" stroke="#999966" points="1164.5,-0.5 861.5,-0.5 "/>
+<polyline fill="none" stroke="#999966" points="861.5,-0.5 861.5,-80.5 "/>
+<polyline fill="none" stroke="#999966" points="1152.5,-80.5 1152.5,-68.5 "/>
+<polyline fill="none" stroke="#999966" points="1152.5,-68.5 1164.5,-68.5 "/>
+<text text-anchor="middle" x="1013" y="-65.3" font-family="Arial" font-size="14.00">Match.pair = ([player_one, score_one],</text>
+<text text-anchor="middle" x="1013" y="-50.3" font-family="Arial" font-size="14.00">[player_two, score_two])</text>
+<text text-anchor="middle" x="1013" y="-35.3" font-family="Arial" font-size="14.00">Résultats : 1-0, 0-1, 0.5-0.5.</text>
+</g>
+<!-- Match->note3 -->
+<g id="edge7" class="edge">
+<title>Match->note3</title>
+<path fill="none" stroke="#34536d" stroke-dasharray="5,2" d="M1013,-222.98C1013,-167.63 1013,-108.74 1013,-80.69"/>
+</g>
+</g>
+</svg>

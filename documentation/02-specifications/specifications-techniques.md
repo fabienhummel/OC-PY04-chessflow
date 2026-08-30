@@ -9,18 +9,19 @@ Utilisateur
     |
     v
 Vues console <-> Contrôleurs -> Modèles métier
-                    |                |
+                    |
                     +-------> Persistance JSON
 ```
 
 ### Responsabilités
 
-- **Modèles** : représenter les données et règles métier.
-- **Vues** : afficher les informations et recueillir les saisies.
-- **Contrôleurs** : orchestrer la navigation, les validations, les modèles et la persistance.
+- **Modèles** : représenter les données métier, leurs validations et leur sérialisation.
+- **Vues** : afficher les informations et recueillir les saisies utilisateur avec `input()`.
+- **Contrôleurs** : orchestrer la navigation, les modèles, les règles de progression, les calculs et la persistance.
+- **Persistance** : lire et écrire les fichiers JSON via `utils/json_manager.py`.
 - **Point d'entrée** : initialiser l'application et lancer le contrôleur principal.
 
-Les modèles ne doivent ni appeler `input()` ni afficher directement des informations.
+Les modèles n'appellent ni `input()` ni les vues ou contrôleurs.
 
 ## 2. Environnement
 
@@ -32,166 +33,297 @@ Les modèles ne doivent ni appeler `input()` ni afficher directement des informa
 | Gestion des dépendances | `pip` et `requirements.txt` |
 | Interface | Console |
 | Persistance | Fichiers JSON locaux |
+| Tests | `unittest` |
 | Qualité | Flake8 7.3.0, longueur maximale 119 |
 | Rapport qualité | flake8-html 0.4.3 |
 | Diagrammes | PlantUML et exports SVG |
 | Plateformes cibles | macOS, Windows et Linux |
 
-L'application privilégie la bibliothèque standard. Les dépendances de développement sont déclarées explicitement.
+L'application métier utilise uniquement la bibliothèque standard. Les dépendances du fichier `requirements.txt` servent au contrôle qualité et au rapport HTML.
 
-## 3. Arborescence cible
+## 3. Arborescence livrée
 
 ```text
 OC-PY04-chessflow/
 ├── controllers/
-├── models/
-├── views/
 ├── data/
-│   ├── players.json
 │   └── tournaments/
 ├── documentation/
 ├── flake8_rapport/
-├── main.py
-├── requirements.txt
+├── models/
+├── tests/
+├── utils/
+├── views/
 ├── .flake8
-└── README.md
+├── .gitignore
+├── main.py
+├── README.md
+└── requirements.txt
 ```
 
-Les fichiers et dossiers générés localement, comme `.venv`, `__pycache__`, les métadonnées d'IDE et les caches, sont exclus par `.gitignore`.
+`data/players.json` et les fichiers `data/tournaments/*.json` sont créés localement au besoin et ne font pas partie des données à versionner.
+
+Les fichiers et dossiers générés localement, comme `.venv`, `__pycache__`, les métadonnées d'IDE et les données d'utilisation, sont exclus par `.gitignore`.
 
 ## 4. Modèles métier
 
 ### `Player`
 
-Attributs essentiels : nom, prénom, date de naissance et identifiant national.
+Attributs :
+
+- `last_name: str` ;
+- `first_name: str` ;
+- `birth_date: str` au format `YYYY-MM-DD` ;
+- `national_id: str` normalisé en majuscules.
 
 Responsabilités :
 
-- valider son identité et le format de son identifiant ;
-- fournir une représentation sérialisable ;
-- être reconstruit depuis des données JSON.
+- valider et normaliser les textes obligatoires ;
+- valider la date de naissance avec `date.fromisoformat()` ;
+- valider l'identifiant avec l'expression régulière `[A-Z]{2}[0-9]{5}` ;
+- fournir `to_dict()` et `from_dict()` pour la persistance.
+
+L'unicité de l'identifiant dans le registre est contrôlée par `PlayerController`.
 
 ### `Tournament`
 
-Attributs essentiels : nom, lieu, dates, description, nombre de rondes, ronde courante, participants, scores et rondes.
+Attributs :
+
+- `name: str` ;
+- `location: str` ;
+- `start_date: str` ;
+- `end_date: str` ;
+- `description: str` ;
+- `number_of_rounds: int` ;
+- `current_round: int` ;
+- `players: list[Player]` ;
+- `rounds: list[Round]`.
 
 Responsabilités :
 
-- inscrire des joueurs sans doublon ;
-- vérifier les conditions de démarrage ;
-- conserver les scores propres au tournoi ;
-- gérer l'avancement et la création des rondes ;
-- fournir les données nécessaires aux appariements.
+- valider le nom, le lieu, les dates et le nombre de rondes ;
+- empêcher une date de fin antérieure à la date de début ;
+- ajouter un joueur à sa collection ;
+- ajouter une ronde et incrémenter `current_round` ;
+- fournir `to_dict()` et `from_dict()`.
+
+Le modèle `Tournament` ne stocke ni score cumulé, ni classement, ni statut distinct. Ces informations sont déduites des rondes et matchs par le contrôleur.
 
 ### `Round`
 
-Attributs essentiels : nom, début, fin et matchs.
+Attributs :
+
+- `name: str` ;
+- `matches: list[Match]` ;
+- `start_datetime: datetime | None` ;
+- `end_datetime: datetime | None`.
 
 Responsabilités :
 
 - contenir les matchs de la ronde ;
-- vérifier que tous les résultats sont renseignés ;
-- enregistrer automatiquement l'heure de fin à la clôture.
+- enregistrer l'heure de fin avec `close()` ;
+- fournir `to_dict()` et `from_dict()`.
+
+Le contrôleur renseigne l'heure de début lors de la création et vérifie la complétude des résultats avant d'appeler `close()`.
 
 ### `Match`
 
-Attributs essentiels : deux références de joueurs et leurs scores.
+Représentation interne :
+
+```python
+pair = (
+    [player_one, score_one],
+    [player_two, score_two],
+)
+```
+
+`pair` est un tuple de deux listes mutables afin de conserver une structure de paire tout en permettant la saisie ultérieure des scores.
+
+Propriétés exposées :
+
+- `player_one` ;
+- `player_two` ;
+- `score_one` ;
+- `score_two`.
 
 Responsabilités :
 
-- garantir deux joueurs distincts ;
-- accepter uniquement les trois résultats valides ;
-- exposer une structure sérialisable compatible JSON.
+- refuser deux joueurs ayant le même identifiant national ;
+- accepter uniquement `(1, 0)`, `(0, 1)` et `(0.5, 0.5)` ;
+- modifier les scores dans les deux listes internes ;
+- fournir `to_dict()` et `from_dict()`.
 
-## 5. Relations UML
+## 5. Contrôleurs
+
+### `PlayerController`
+
+Responsabilités principales :
+
+- charger le registre des joueurs au démarrage ;
+- créer, lister, rechercher, modifier et supprimer les joueurs ;
+- contrôler l'unicité de l'identifiant national ;
+- trier les listes par nom puis prénom ;
+- bloquer les écritures si le registre n'a pas pu être chargé correctement ;
+- déclencher les sauvegardes après modification.
+
+### `TournamentController`
+
+Responsabilités principales :
+
+- créer, lister et charger les tournois ;
+- ajouter les participants avant le démarrage de la première ronde ;
+- créer les rondes et leurs matchs ;
+- contrôler qu'une ronde précédente est clôturée ;
+- calculer le score d'un joueur en parcourant tous les matchs ;
+- produire le classement par score décroissant ;
+- détecter les rencontres déjà jouées ;
+- enregistrer les résultats et clôturer les rondes ;
+- déclencher les sauvegardes.
+
+### `ApplicationController`
+
+Responsabilités principales :
+
+- piloter les menus et sous-menus ;
+- relier les vues aux contrôleurs métier ;
+- gérer le tournoi actuellement chargé ;
+- appliquer les conditions de navigation et de progression ;
+- présenter les erreurs métier à l'utilisateur.
+
+## 6. Relations UML
 
 | Relation | Type | Cardinalité |
 | --- | --- | --- |
-| `Tournament` - `Player` | Agrégation | Un tournoi agrège 2..* joueurs ; un joueur participe à 0..* tournois |
-| `Tournament` - `Round` | Composition | Un tournoi compose 0..* rondes ; une ronde appartient à un tournoi |
-| `Round` - `Match` | Composition | Une ronde compose 1..* matchs ; un match appartient à une ronde |
+| `Tournament` - `Player` | Agrégation | Un tournoi agrège 0..* joueurs ; un joueur peut apparaître dans 0..* tournois |
+| `Tournament` - `Round` | Composition métier | Un tournoi contient 0..* rondes |
+| `Round` - `Match` | Composition métier | Une ronde contient 0..* matchs |
 | `Match` - `Player` | Association | Un match référence exactement deux joueurs |
 
-Aucune classe abstraite ni hiérarchie d'héritage ne sont justifiées.
+Aucune classe abstraite ni hiérarchie d'héritage ne sont utilisées.
 
-## 6. Persistance JSON
+## 7. Persistance JSON
 
-### Organisation
+### Chemins
 
-- `data/players.json` : registre général des joueurs ;
-- `data/tournaments/` : un ou plusieurs fichiers de tournois.
+Les chemins sont ancrés sur la racine du projet avec `pathlib` :
+
+```text
+PROJECT_ROOT
+└── data/
+    ├── players.json
+    └── tournaments/
+```
 
 ### Principes
 
-- les écritures utilisent `pathlib` et l'encodage UTF-8 ;
-- les dossiers manquants sont créés proprement ;
-- toute modification validée déclenche une sauvegarde ;
-- les dates et heures utilisent un format ISO 8601 ;
-- les chargements reconstruisent les objets métier ;
-- un fichier absent correspond à une collection vide ;
-- un JSON illisible déclenche une erreur explicite sans écraser les données existantes.
+- `load_players()` retourne une liste vide si `players.json` n'existe pas ;
+- un fichier joueur vide, un JSON invalide ou une structure autre qu'une liste produit une `ValueError` explicite ;
+- les données de chaque joueur sont revalidées par `Player.from_dict()` ;
+- `save_players()` crée le dossier parent si nécessaire et écrit en UTF-8 ;
+- `load_tournament()` vérifie l'existence, la taille, la syntaxe JSON et la structure dictionnaire ;
+- les données du tournoi sont revalidées lors de `Tournament.from_dict()` ;
+- `save_tournament()` crée `data/tournaments/` si nécessaire et écrit en UTF-8 ;
+- les objets métier sont sérialisés avec leurs méthodes `to_dict()`.
 
-Une écriture temporaire suivie d'un remplacement atomique est recommandée pour limiter le risque de fichier partiellement écrit.
+Les écritures utilisent directement les fichiers cibles. Il n'y a pas de mécanisme de remplacement atomique dans la version 1.0.
 
-## 7. Algorithme d'appariement
+## 8. Algorithme d'appariement
 
 ### Première ronde
 
-1. copier la liste des participants ;
-2. la mélanger aléatoirement ;
-3. associer les joueurs consécutifs ;
-4. vérifier que chaque joueur apparaît exactement une fois.
+1. copier `tournament.players` ;
+2. mélanger la copie avec `random.shuffle()` ;
+3. extraire les joueurs deux par deux ;
+4. créer un objet `Match` pour chaque paire.
 
 ### Rondes suivantes
 
-1. classer les participants par score décroissant ;
-2. mélanger les joueurs à égalité ;
-3. sélectionner pour chaque joueur disponible l'adversaire disponible le plus proche ;
-4. préférer un adversaire jamais rencontré ;
-5. autoriser une répétition uniquement si elle est nécessaire pour produire une ronde complète.
+1. produire le classement avec `get_ranking()` ;
+2. trier les joueurs par score décroissant ;
+3. conserver l'ordre relatif des joueurs à égalité, car `sorted()` est stable ;
+4. prendre le premier joueur disponible ;
+5. rechercher le premier adversaire restant qui n'a pas déjà été rencontré ;
+6. si aucun adversaire inédit n'existe, utiliser le premier adversaire restant ;
+7. répéter jusqu'à épuisement de la liste.
 
-L'objectif est un algorithme lisible et explicable, pas une optimisation exhaustive du système suisse.
+L'objectif est un algorithme simple et explicable qui évite les revanches autant que possible, sans recherche exhaustive du système suisse.
 
-## 8. Validation des entrées
+## 9. Calcul des scores et classement
 
-- identifiant national : expression régulière `^[A-Za-z]{2}\d{5}$` puis normalisation en majuscules ;
-- date de naissance et dates de tournoi : parsing contrôlé ;
-- fin du tournoi supérieure ou égale au début ;
-- nombre de rondes entier strictement positif ;
-- nombre de participants pair et supérieur ou égal à deux ;
-- résultat limité aux couples autorisés.
+Les scores ne sont pas stockés comme attributs de `Player` ou `Tournament`.
 
-Les erreurs utilisateur sont affichées par les vues et permettent une nouvelle saisie.
+`TournamentController.get_player_score()` parcourt toutes les rondes et tous les matchs du tournoi. Il additionne les scores non nuls associés à l'identifiant national du joueur.
 
-## 9. Qualité et vérification
+`get_ranking()` trie ensuite `tournament.players` par score décroissant.
 
-La configuration Flake8 utilise une longueur maximale de 119 caractères. Le contrôle standard est :
+Cette approche garantit qu'après rechargement d'un tournoi, les scores sont reconstruits automatiquement depuis les résultats persistés.
+
+## 10. Validation des entrées
+
+### Modèles
+
+- nom et prénom : texte non vide après `strip()` ;
+- identifiant national : normalisation en majuscules puis expression régulière `[A-Z]{2}[0-9]{5}` ;
+- date de naissance et dates du tournoi : parsing avec `date.fromisoformat()` ;
+- date de fin supérieure ou égale à la date de début ;
+- nombre de rondes converti en entier strictement positif ;
+- résultat limité aux trois couples autorisés.
+
+### Contrôleurs et vues
+
+- unicité de l'identifiant joueur contrôlée lors de la création et de la modification ;
+- doublon de participant refusé dans un tournoi ;
+- ajout de participant interdit après la première ronde ;
+- création d'une ronde refusée sans participant ou avec un nombre impair ;
+- nouvelle ronde interdite tant qu'une ronde précédente est ouverte ;
+- nouvelle ronde interdite lorsque le nombre prévu est atteint ;
+- clôture refusée tant qu'un résultat manque ;
+- saisie des scores répétée tant que le couple n'est pas valide.
+
+## 11. Qualité et vérification
+
+La configuration Flake8 utilise une longueur maximale de 119 caractères.
+
+Contrôle standard :
 
 ```bash
 flake8 .
 ```
 
-Le rapport HTML est généré dans `flake8_rapport` avec :
+Génération du rapport HTML :
 
 ```bash
 flake8 --format=html --htmldir=flake8_rapport .
 ```
 
-Les vérifications doivent couvrir au minimum :
+Le rapport final indique zéro erreur Flake8 sur 28 fichiers analysés.
 
-- création et validation des quatre modèles ;
+Les tests automatisés sont exécutés avec :
+
+```bash
+python -m unittest discover -v
+```
+
+La version consolidée comporte 70 tests passants.
+
+Les vérifications couvrent notamment :
+
+- validation des modèles ;
+- représentation interne du match ;
 - sérialisation et désérialisation ;
-- calcul des trois résultats possibles ;
-- appariements avec et sans historique ;
-- interruption et reprise d'un tournoi ;
-- respect des invariants métier ;
-- parcours console nominal.
+- persistance JSON et erreurs de chargement ;
+- unicité et tri des joueurs ;
+- appariements et historique des rencontres ;
+- saisie des résultats et calcul des scores ;
+- règles de progression des rondes ;
+- indépendance des modèles vis-à-vis des vues et contrôleurs.
 
-## 10. Sécurité et robustesse
+## 12. Sécurité et robustesse
 
 - aucune donnée sensible ni aucun secret n'est nécessaire ;
 - aucune communication réseau n'est effectuée pendant l'usage métier ;
 - les chemins sont construits avec `pathlib` ;
 - les données chargées sont validées avant reconstruction des objets ;
-- les fichiers valides ne sont pas écrasés après une erreur de lecture ou de validation.
-
+- les erreurs JSON sont remontées avec des messages explicites ;
+- le registre joueur n'est pas réécrit si son chargement a échoué ;
+- les données locales d'utilisation sont séparées du code source et ne sont pas versionnées.
