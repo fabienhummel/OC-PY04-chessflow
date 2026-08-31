@@ -4,7 +4,7 @@ from datetime import datetime
 from models.match import Match
 from models.round import Round
 from models.tournament import Tournament
-from utils.json_manager import (
+from persistence.json_repository import (
     TOURNAMENTS_FOLDER,
     load_tournament,
     save_tournament,

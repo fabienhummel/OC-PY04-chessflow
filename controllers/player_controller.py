@@ -1,5 +1,5 @@
 from models.player import Player
-from utils.json_manager import load_players, save_players
+from persistence.json_repository import load_players, save_players
 
 
 class PlayerController:
