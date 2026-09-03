@@ -58,6 +58,20 @@ class TournamentController:
 
         return value
 
+    @staticmethod
+    def create_match(player_one, player_two):
+        """Validate and create a match."""
+        if player_one.national_id == player_two.national_id:
+            raise ValueError("A match must contain two different players.")
+
+        return Match(player_one, player_two)
+
+    @staticmethod
+    def validate_result(score_one, score_two):
+        """Validate a match result."""
+        if (score_one, score_two) not in ((1, 0), (0, 1), (0.5, 0.5)):
+            raise ValueError("Valid results are 1-0, 0-1 or 0.5-0.5.")
+
     def create_tournament(
         self,
         name,
@@ -236,14 +250,15 @@ class TournamentController:
                 opponent_index = 0
 
             player_two = players.pop(opponent_index)
-            match = Match(player_one, player_two)
+            match = self.create_match(player_one, player_two)
             round_.add_match(match)
 
         save_tournament(tournament, f"{tournament.name}.json")
         return round_.matches
 
     def record_result(self, tournament, match, score_one, score_two):
-        """Record a match result."""
+        """Validate and record a match result."""
+        self.validate_result(score_one, score_two)
         match.set_result(score_one, score_two)
         save_tournament(tournament, f"{tournament.name}.json")
 
