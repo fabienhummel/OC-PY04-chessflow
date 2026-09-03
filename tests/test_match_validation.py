@@ -1,19 +1,21 @@
 import unittest
 from unittest.mock import patch
 
-from controllers.tournament_controller import TournamentController
+from controllers.match_controller import MatchController
+from models.match import Match
 from models.player import Player
 from models.tournament import Tournament
 
 
 class MatchValidationTestCase(unittest.TestCase):
-    """Test match validation in the tournament controller."""
+    """Test match result validation."""
 
     def setUp(self):
         """Create controller and match test data."""
-        self.controller = TournamentController()
+        self.controller = MatchController()
         self.player_one = Player("Dupont", "Alice", "1990-05-12", "AB12345")
         self.player_two = Player("Martin", "Bob", "1988-03-20", "CD67890")
+        self.match = Match(self.player_one, self.player_two)
         self.tournament = Tournament(
             "Test tournament",
             "Thann",
@@ -21,29 +23,30 @@ class MatchValidationTestCase(unittest.TestCase):
             "2026-09-05",
         )
 
-    def test_controller_rejects_same_player_twice(self):
-        """Reject a match containing the same player twice."""
-        with self.assertRaises(ValueError):
-            self.controller.create_match(self.player_one, self.player_one)
-
-    @patch("controllers.tournament_controller.save_tournament")
+    @patch("controllers.match_controller.save_tournament")
     def test_controller_normalizes_string_result(self, mock_save_tournament):
         """Convert user score strings before storing the result."""
-        match = self.controller.create_match(self.player_one, self.player_two)
+        self.controller.record_result(
+            self.tournament,
+            self.match,
+            "0,5",
+            "0.5",
+        )
 
-        self.controller.record_result(self.tournament, match, "0,5", "0.5")
-
-        self.assertEqual(match.score_one, 0.5)
-        self.assertEqual(match.score_two, 0.5)
+        self.assertEqual(self.match.score_one, 0.5)
+        self.assertEqual(self.match.score_two, 0.5)
         mock_save_tournament.assert_called_once()
 
-    @patch("controllers.tournament_controller.save_tournament")
+    @patch("controllers.match_controller.save_tournament")
     def test_controller_rejects_invalid_result(self, mock_save_tournament):
         """Reject a result outside the three allowed combinations."""
-        match = self.controller.create_match(self.player_one, self.player_two)
-
         with self.assertRaises(ValueError):
-            self.controller.record_result(self.tournament, match, 2, 0)
+            self.controller.record_result(
+                self.tournament,
+                self.match,
+                2,
+                0,
+            )
 
         mock_save_tournament.assert_not_called()
 

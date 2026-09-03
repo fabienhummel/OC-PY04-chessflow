@@ -1,4 +1,6 @@
+from controllers.match_controller import MatchController
 from controllers.player_controller import PlayerController
+from controllers.round_controller import RoundController
 from controllers.tournament_controller import TournamentController
 from views.main_menu_view import MainMenuView
 from views.player_view import PlayerView
@@ -13,6 +15,8 @@ class ApplicationController:
         """Initialize the application controller."""
         self.player_controller = PlayerController()
         self.tournament_controller = TournamentController()
+        self.round_controller = RoundController()
+        self.match_controller = MatchController()
         self.main_menu_view = MainMenuView()
         self.player_view = PlayerView()
         self.tournament_view = TournamentView()
@@ -154,7 +158,7 @@ class ApplicationController:
             elif choice == "3":
                 self.manage_rounds()
             elif choice == "4":
-                ranking = self.tournament_controller.get_ranking_with_scores(
+                ranking = self.round_controller.get_ranking_with_scores(
                     self.current_tournament
                 )
                 self.report_view.display_ranking(ranking)
@@ -208,10 +212,10 @@ class ApplicationController:
 
             elif choice == "2":
                 try:
-                    round_ = self.tournament_controller.create_round(
+                    round_ = self.round_controller.create_round(
                         self.current_tournament
                     )
-                    self.tournament_controller.create_matches(
+                    self.round_controller.create_matches(
                         self.current_tournament,
                         round_,
                     )
@@ -260,7 +264,7 @@ class ApplicationController:
                     )
 
                     try:
-                        self.tournament_controller.record_result(
+                        self.match_controller.record_result(
                             self.current_tournament,
                             match,
                             score_one,
@@ -273,7 +277,7 @@ class ApplicationController:
                     print("Result saved.")
 
             elif choice == "4":
-                round_ = self.tournament_controller.get_open_round(
+                round_ = self.round_controller.get_open_round(
                     self.current_tournament
                 )
 
@@ -282,7 +286,7 @@ class ApplicationController:
                     continue
 
                 try:
-                    self.tournament_controller.close_round(
+                    self.round_controller.close_round(
                         self.current_tournament,
                         round_,
                     )
@@ -361,7 +365,7 @@ class ApplicationController:
                 tournament = self.select_report_tournament()
 
                 if tournament is not None:
-                    ranking = self.tournament_controller.get_ranking_with_scores(
+                    ranking = self.round_controller.get_ranking_with_scores(
                         tournament
                     )
                     self.report_view.display_ranking(ranking)
