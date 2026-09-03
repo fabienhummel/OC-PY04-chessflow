@@ -254,7 +254,7 @@ class PersistenceTestCase(unittest.TestCase):
             controller = TournamentController()
 
             with patch(
-                "controllers.tournament_controller.TOURNAMENTS_FOLDER",
+                "persistence.json_repository.TOURNAMENTS_FOLDER",
                 tournaments_folder,
             ):
                 with self.assertRaisesRegex(ValueError, "already exists"):

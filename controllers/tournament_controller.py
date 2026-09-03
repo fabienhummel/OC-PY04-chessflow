@@ -2,7 +2,7 @@ from datetime import date
 
 from models.tournament import Tournament
 from persistence.json_repository import (
-    TOURNAMENTS_FOLDER,
+    list_tournament_files as get_tournament_files,
     load_tournament,
     save_tournament,
 )
@@ -92,14 +92,7 @@ class TournamentController:
     @staticmethod
     def list_tournament_files():
         """List saved tournament files."""
-        if not TOURNAMENTS_FOLDER.exists():
-            return []
-
-        return sorted(
-            path.name
-            for path in TOURNAMENTS_FOLDER.iterdir()
-            if path.is_file() and path.suffix == ".json"
-        )
+        return get_tournament_files()
 
     def list_saved_tournaments(self):
         """Load all saved tournaments for reports."""
