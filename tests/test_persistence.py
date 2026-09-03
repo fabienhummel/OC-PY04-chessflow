@@ -9,8 +9,8 @@ from models.match import Match
 from models.player import Player
 from models.round import Round
 from models.tournament import Tournament
-from utils import json_manager
-from utils.json_manager import (
+from persistence import json_repository
+from persistence.json_repository import (
     delete_tournament,
     load_players,
     load_tournament,
@@ -24,14 +24,14 @@ class PersistenceTestCase(unittest.TestCase):
 
     def test_data_paths_are_anchored_to_project_root(self):
         """Use project data paths independently from the working directory."""
-        self.assertTrue(json_manager.PLAYERS_FILE.is_absolute())
+        self.assertTrue(json_repository.PLAYERS_FILE.is_absolute())
         self.assertEqual(
-            json_manager.PLAYERS_FILE,
-            json_manager.DATA_FOLDER / "players.json",
+            json_repository.PLAYERS_FILE,
+            json_repository.DATA_FOLDER / "players.json",
         )
         self.assertEqual(
-            json_manager.TOURNAMENTS_FOLDER,
-            json_manager.DATA_FOLDER / "tournaments",
+            json_repository.TOURNAMENTS_FOLDER,
+            json_repository.DATA_FOLDER / "tournaments",
         )
 
     def test_missing_players_file_returns_empty_list(self):
@@ -39,7 +39,7 @@ class PersistenceTestCase(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             players_file = Path(directory) / "players.json"
 
-            with patch("utils.json_manager.PLAYERS_FILE", players_file):
+            with patch("persistence.json_repository.PLAYERS_FILE", players_file):
                 self.assertEqual(load_players(), [])
 
     def test_save_and_load_players(self):
@@ -47,7 +47,7 @@ class PersistenceTestCase(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             players_file = Path(directory) / "players.json"
 
-            with patch("utils.json_manager.PLAYERS_FILE", players_file):
+            with patch("persistence.json_repository.PLAYERS_FILE", players_file):
                 players = [Player("Dupont", "Alice", "1990-05-12", "AB12345")]
                 save_players(players)
                 loaded_players = load_players()
@@ -61,7 +61,7 @@ class PersistenceTestCase(unittest.TestCase):
             players_file = Path(directory) / "players.json"
             players_file.write_text("", encoding="utf-8")
 
-            with patch("utils.json_manager.PLAYERS_FILE", players_file):
+            with patch("persistence.json_repository.PLAYERS_FILE", players_file):
                 with self.assertRaisesRegex(ValueError, "empty"):
                     load_players()
 
@@ -71,7 +71,7 @@ class PersistenceTestCase(unittest.TestCase):
             players_file = Path(directory) / "players.json"
             players_file.write_text("{invalid", encoding="utf-8")
 
-            with patch("utils.json_manager.PLAYERS_FILE", players_file):
+            with patch("persistence.json_repository.PLAYERS_FILE", players_file):
                 with self.assertRaisesRegex(ValueError, "invalid JSON"):
                     load_players()
 
@@ -105,7 +105,7 @@ class PersistenceTestCase(unittest.TestCase):
             filename = "test_finished_tournament.json"
 
             with patch(
-                "utils.json_manager.TOURNAMENTS_FOLDER",
+                "persistence.json_repository.TOURNAMENTS_FOLDER",
                 tournaments_folder,
             ):
                 player_one = Player(
@@ -157,7 +157,7 @@ class PersistenceTestCase(unittest.TestCase):
             filename = "test_tournament_in_progress.json"
 
             with patch(
-                "utils.json_manager.TOURNAMENTS_FOLDER",
+                "persistence.json_repository.TOURNAMENTS_FOLDER",
                 tournaments_folder,
             ):
                 player_one = Player(
@@ -204,7 +204,7 @@ class PersistenceTestCase(unittest.TestCase):
             tournaments_folder = Path(directory) / "tournaments"
 
             with patch(
-                "utils.json_manager.TOURNAMENTS_FOLDER",
+                "persistence.json_repository.TOURNAMENTS_FOLDER",
                 tournaments_folder,
             ):
                 with self.assertRaisesRegex(ValueError, "not found"):
@@ -219,7 +219,7 @@ class PersistenceTestCase(unittest.TestCase):
             tournament_file.write_text("", encoding="utf-8")
 
             with patch(
-                "utils.json_manager.TOURNAMENTS_FOLDER",
+                "persistence.json_repository.TOURNAMENTS_FOLDER",
                 tournaments_folder,
             ):
                 with self.assertRaisesRegex(ValueError, "empty"):
@@ -234,7 +234,7 @@ class PersistenceTestCase(unittest.TestCase):
             tournament_file.write_text("{invalid", encoding="utf-8")
 
             with patch(
-                "utils.json_manager.TOURNAMENTS_FOLDER",
+                "persistence.json_repository.TOURNAMENTS_FOLDER",
                 tournaments_folder,
             ):
                 with self.assertRaisesRegex(ValueError, "invalid JSON"):
@@ -254,7 +254,7 @@ class PersistenceTestCase(unittest.TestCase):
             controller = TournamentController()
 
             with patch(
-                "controllers.tournament_controller.TOURNAMENTS_FOLDER",
+                "persistence.json_repository.TOURNAMENTS_FOLDER",
                 tournaments_folder,
             ):
                 with self.assertRaisesRegex(ValueError, "already exists"):
