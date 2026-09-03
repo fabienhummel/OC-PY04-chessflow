@@ -1,5 +1,5 @@
 import random
-from datetime import datetime
+from datetime import date, datetime
 
 from models.match import Match
 from models.round import Round
@@ -18,6 +18,46 @@ class TournamentController:
         """Initialize the tournament controller."""
         self.tournaments = []
 
+    @staticmethod
+    def validate_required_text(value, field_name):
+        """Validate and normalize required text."""
+        value = value.strip()
+
+        if not value:
+            raise ValueError(f"{field_name} is required.")
+
+        return value
+
+    @staticmethod
+    def validate_date(value, field_name):
+        """Validate and normalize a date."""
+        value = value.strip()
+
+        if not value:
+            raise ValueError(f"{field_name} is required.")
+
+        try:
+            date.fromisoformat(value)
+        except ValueError:
+            raise ValueError(
+                f"{field_name} must be a valid date in YYYY-MM-DD format."
+            ) from None
+
+        return value
+
+    @staticmethod
+    def validate_number_of_rounds(value):
+        """Validate the number of rounds."""
+        try:
+            value = int(value)
+        except (TypeError, ValueError):
+            raise ValueError("Number of rounds must be a positive integer.") from None
+
+        if value <= 0:
+            raise ValueError("Number of rounds must be a positive integer.")
+
+        return value
+
     def create_tournament(
         self,
         name,
@@ -27,7 +67,21 @@ class TournamentController:
         description="",
         number_of_rounds=4,
     ):
-        """Create a tournament."""
+        """Validate and create a tournament."""
+        name = self.validate_required_text(name, "Tournament name")
+        location = self.validate_required_text(location, "Location")
+        start_date = self.validate_date(start_date, "Start date")
+        end_date = self.validate_date(end_date, "End date")
+        number_of_rounds = self.validate_number_of_rounds(number_of_rounds)
+
+        if date.fromisoformat(end_date) < date.fromisoformat(start_date):
+            raise ValueError("End date cannot be earlier than start date.")
+
+        filename = f"{name}.json"
+
+        if filename in self.list_tournament_files():
+            raise ValueError("A tournament with this name already exists.")
+
         tournament = Tournament(
             name,
             location,
@@ -36,11 +90,6 @@ class TournamentController:
             description,
             number_of_rounds,
         )
-        filename = f"{tournament.name}.json"
-
-        if filename in self.list_tournament_files():
-            raise ValueError("A tournament with this name already exists.")
-
         self.tournaments.append(tournament)
         save_tournament(tournament, filename)
         return tournament
