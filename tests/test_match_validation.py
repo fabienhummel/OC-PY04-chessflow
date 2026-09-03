@@ -27,6 +27,17 @@ class MatchValidationTestCase(unittest.TestCase):
             self.controller.create_match(self.player_one, self.player_one)
 
     @patch("controllers.tournament_controller.save_tournament")
+    def test_controller_normalizes_string_result(self, mock_save_tournament):
+        """Convert user score strings before storing the result."""
+        match = self.controller.create_match(self.player_one, self.player_two)
+
+        self.controller.record_result(self.tournament, match, "0,5", "0.5")
+
+        self.assertEqual(match.score_one, 0.5)
+        self.assertEqual(match.score_two, 0.5)
+        mock_save_tournament.assert_called_once()
+
+    @patch("controllers.tournament_controller.save_tournament")
     def test_controller_rejects_invalid_result(self, mock_save_tournament):
         """Reject a result outside the three allowed combinations."""
         match = self.controller.create_match(self.player_one, self.player_two)

@@ -125,10 +125,6 @@ class ApplicationController:
 
                 filename = self.tournament_view.get_filename()
 
-                if filename not in filenames:
-                    print("Tournament not found.")
-                    continue
-
                 try:
                     self.current_tournament = (
                         self.tournament_controller.load_tournament(filename)
@@ -158,20 +154,10 @@ class ApplicationController:
             elif choice == "3":
                 self.manage_rounds()
             elif choice == "4":
-                ranking = self.tournament_controller.get_ranking(
+                ranking = self.tournament_controller.get_ranking_with_scores(
                     self.current_tournament
                 )
-                ranking_with_scores = [
-                    (
-                        player,
-                        self.tournament_controller.get_player_score(
-                            self.current_tournament,
-                            player,
-                        ),
-                    )
-                    for player in ranking
-                ]
-                self.report_view.display_ranking(ranking_with_scores)
+                self.report_view.display_ranking(ranking)
             elif choice == "0":
                 break
             else:
@@ -189,15 +175,6 @@ class ApplicationController:
                 )
                 self.player_view.display_players(players)
             elif choice == "2":
-                if not self.tournament_controller.can_add_player(
-                    self.current_tournament
-                ):
-                    print(
-                        "Players cannot be added after the first round "
-                        "has started."
-                    )
-                    continue
-
                 national_id = self.tournament_view.get_player_national_id()
                 player = self.player_controller.find_player(national_id)
 
@@ -230,38 +207,18 @@ class ApplicationController:
                 self.report_view.display_rounds(self.current_tournament.rounds)
 
             elif choice == "2":
-                if self.current_tournament.current_round >= (
-                    self.current_tournament.number_of_rounds
-                ):
-                    print("All rounds have already been created.")
-                    continue
-
-                if not self.tournament_controller.can_create_next_round(
-                    self.current_tournament
-                ):
-                    print(
-                        "The current round must be closed before "
-                        "creating the next round."
+                try:
+                    round_ = self.tournament_controller.create_round(
+                        self.current_tournament
                     )
+                    self.tournament_controller.create_matches(
+                        self.current_tournament,
+                        round_,
+                    )
+                except ValueError as error:
+                    print(error)
                     continue
 
-                players = self.current_tournament.players
-
-                if len(players) == 0:
-                    print("Add players before creating a round.")
-                    continue
-
-                if len(players) % 2 != 0:
-                    print("The tournament must have an even number of players.")
-                    continue
-
-                round_ = self.tournament_controller.create_round(
-                    self.current_tournament
-                )
-                self.tournament_controller.create_matches(
-                    self.current_tournament,
-                    round_,
-                )
                 print(f"{round_.name} created.")
 
             elif choice == "3":
@@ -301,19 +258,21 @@ class ApplicationController:
                     score_one, score_two = self.tournament_view.get_match_result(
                         match
                     )
-                    self.tournament_controller.record_result(
-                        self.current_tournament,
-                        match,
-                        score_one,
-                        score_two,
-                    )
+
+                    try:
+                        self.tournament_controller.record_result(
+                            self.current_tournament,
+                            match,
+                            score_one,
+                            score_two,
+                        )
+                    except ValueError as error:
+                        print(error)
+                        continue
+
                     print("Result saved.")
 
             elif choice == "4":
-                if not self.current_tournament.rounds:
-                    print("No round available.")
-                    continue
-
                 round_ = self.tournament_controller.get_open_round(
                     self.current_tournament
                 )
@@ -322,14 +281,15 @@ class ApplicationController:
                     print("No open round available.")
                     continue
 
-                if not self.tournament_controller.is_round_complete(round_):
-                    print("Enter all match results before closing the round.")
+                try:
+                    self.tournament_controller.close_round(
+                        self.current_tournament,
+                        round_,
+                    )
+                except ValueError as error:
+                    print(error)
                     continue
 
-                self.tournament_controller.close_round(
-                    self.current_tournament,
-                    round_,
-                )
                 print(f"{round_.name} closed.")
 
             elif choice == "0":
@@ -347,10 +307,6 @@ class ApplicationController:
             return None
 
         filename = self.tournament_view.get_filename()
-
-        if filename not in filenames:
-            print("Tournament not found.")
-            return None
 
         try:
             return self.tournament_controller.load_tournament(filename)
@@ -404,21 +360,11 @@ class ApplicationController:
             elif choice == "6":
                 tournament = self.select_report_tournament()
 
-                if tournament is None:
-                    continue
-
-                ranking = self.tournament_controller.get_ranking(tournament)
-                ranking_with_scores = [
-                    (
-                        player,
-                        self.tournament_controller.get_player_score(
-                            tournament,
-                            player,
-                        ),
+                if tournament is not None:
+                    ranking = self.tournament_controller.get_ranking_with_scores(
+                        tournament
                     )
-                    for player in ranking
-                ]
-                self.report_view.display_ranking(ranking_with_scores)
+                    self.report_view.display_ranking(ranking)
 
             elif choice == "0":
                 break

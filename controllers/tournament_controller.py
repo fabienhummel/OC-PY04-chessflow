@@ -14,10 +14,6 @@ from persistence.json_repository import (
 class TournamentController:
     """Manage tournament-related actions."""
 
-    def __init__(self):
-        """Initialize the tournament controller."""
-        self.tournaments = []
-
     @staticmethod
     def validate_required_text(value, field_name):
         """Validate and normalize required text."""
@@ -48,6 +44,9 @@ class TournamentController:
     @staticmethod
     def validate_number_of_rounds(value):
         """Validate the number of rounds."""
+        if value in ("", None):
+            return 4
+
         try:
             value = int(value)
         except (TypeError, ValueError):
@@ -68,9 +67,17 @@ class TournamentController:
 
     @staticmethod
     def validate_result(score_one, score_two):
-        """Validate a match result."""
+        """Validate and normalize a match result."""
+        try:
+            score_one = float(str(score_one).replace(",", "."))
+            score_two = float(str(score_two).replace(",", "."))
+        except ValueError:
+            raise ValueError("Scores must be numbers.") from None
+
         if (score_one, score_two) not in ((1, 0), (0, 1), (0.5, 0.5)):
             raise ValueError("Valid results are 1-0, 0-1 or 0.5-0.5.")
+
+        return score_one, score_two
 
     def create_tournament(
         self,
@@ -104,7 +111,6 @@ class TournamentController:
             description,
             number_of_rounds,
         )
-        self.tournaments.append(tournament)
         save_tournament(tournament, filename)
         return tournament
 
@@ -121,18 +127,14 @@ class TournamentController:
 
     def list_saved_tournaments(self):
         """Load all saved tournaments for reports."""
-        tournaments = []
-
-        for filename in self.list_tournament_files():
-            tournaments.append(load_tournament(filename))
-
-        return tournaments
+        return [
+            load_tournament(filename)
+            for filename in self.list_tournament_files()
+        ]
 
     def load_tournament(self, filename):
         """Load a tournament."""
-        tournament = load_tournament(filename)
-        self.tournaments.append(tournament)
-        return tournament
+        return load_tournament(filename)
 
     def list_tournament_players(self, tournament):
         """List tournament players in alphabetical order."""
@@ -149,7 +151,12 @@ class TournamentController:
         return tournament.current_round == 0
 
     def add_player(self, tournament, player):
-        """Add a player to a tournament."""
+        """Validate and add a player to a tournament."""
+        if not self.can_add_player(tournament):
+            raise ValueError(
+                "Players cannot be added after the first round has started."
+            )
+
         for existing_player in tournament.players:
             if existing_player.national_id == player.national_id:
                 raise ValueError("This player is already registered in the tournament.")
@@ -158,7 +165,21 @@ class TournamentController:
         save_tournament(tournament, f"{tournament.name}.json")
 
     def create_round(self, tournament):
-        """Create a tournament round."""
+        """Validate and create a tournament round."""
+        if tournament.current_round >= tournament.number_of_rounds:
+            raise ValueError("All rounds have already been created.")
+
+        if not self.can_create_next_round(tournament):
+            raise ValueError(
+                "The current round must be closed before creating the next round."
+            )
+
+        if not tournament.players:
+            raise ValueError("Add players before creating a round.")
+
+        if len(tournament.players) % 2 != 0:
+            raise ValueError("The tournament must have an even number of players.")
+
         round_ = Round(f"Round {tournament.current_round + 1}")
         round_.start_datetime = datetime.now()
         tournament.add_round(round_)
@@ -207,6 +228,13 @@ class TournamentController:
             key=lambda player: self.get_player_score(tournament, player),
             reverse=True,
         )
+
+    def get_ranking_with_scores(self, tournament):
+        """Return the ranking with each player's score."""
+        return [
+            (player, self.get_player_score(tournament, player))
+            for player in self.get_ranking(tournament)
+        ]
 
     def have_played_together(self, tournament, player_one, player_two):
         """Check if two players have already played together."""
@@ -258,11 +286,17 @@ class TournamentController:
 
     def record_result(self, tournament, match, score_one, score_two):
         """Validate and record a match result."""
-        self.validate_result(score_one, score_two)
+        score_one, score_two = self.validate_result(score_one, score_two)
         match.set_result(score_one, score_two)
         save_tournament(tournament, f"{tournament.name}.json")
 
     def close_round(self, tournament, round_):
-        """Close a round."""
+        """Validate and close a round."""
+        if round_.end_datetime is not None:
+            raise ValueError("This round is already closed.")
+
+        if not self.is_round_complete(round_):
+            raise ValueError("Enter all match results before closing the round.")
+
         round_.close()
         save_tournament(tournament, f"{tournament.name}.json")

@@ -1,5 +1,6 @@
 import unittest
 from datetime import datetime
+from unittest.mock import patch
 
 from controllers.tournament_controller import TournamentController
 from models.match import Match
@@ -56,6 +57,47 @@ class RoundWorkflowTestCase(unittest.TestCase):
         result = self.controller.get_open_round(self.tournament)
 
         self.assertIs(result, round_two)
+
+    @patch("controllers.tournament_controller.save_tournament")
+    def test_create_round_requires_players(self, mock_save_tournament):
+        """Reject round creation when the tournament has no players."""
+        with self.assertRaises(ValueError):
+            self.controller.create_round(self.tournament)
+
+        mock_save_tournament.assert_not_called()
+
+    @patch("controllers.tournament_controller.save_tournament")
+    def test_create_round_requires_even_players(self, mock_save_tournament):
+        """Reject round creation with an odd number of players."""
+        self.tournament.add_player(self.player_one)
+
+        with self.assertRaises(ValueError):
+            self.controller.create_round(self.tournament)
+
+        mock_save_tournament.assert_not_called()
+
+    @patch("controllers.tournament_controller.save_tournament")
+    def test_create_round_rejects_open_round(self, mock_save_tournament):
+        """Reject a new round while the current round is open."""
+        self.tournament.add_player(self.player_one)
+        self.tournament.add_player(self.player_two)
+        self.tournament.add_round(Round("Round 1"))
+
+        with self.assertRaises(ValueError):
+            self.controller.create_round(self.tournament)
+
+        mock_save_tournament.assert_not_called()
+
+    @patch("controllers.tournament_controller.save_tournament")
+    def test_close_round_requires_all_results(self, mock_save_tournament):
+        """Reject closing a round before every result is entered."""
+        round_one = Round("Round 1")
+        round_one.add_match(Match(self.player_one, self.player_two))
+
+        with self.assertRaises(ValueError):
+            self.controller.close_round(self.tournament, round_one)
+
+        mock_save_tournament.assert_not_called()
 
 
 if __name__ == "__main__":

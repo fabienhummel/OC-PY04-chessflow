@@ -48,9 +48,6 @@ class TournamentView:
         description = input("Description: ")
         number_of_rounds = input("Number of rounds (default 4): ")
 
-        if not number_of_rounds:
-            number_of_rounds = 4
-
         return (
             name,
             location,
@@ -132,19 +129,6 @@ class TournamentView:
             f"vs {match.player_two.first_name} {match.player_two.last_name}"
         )
         print(f"Current result: {match.score_one} - {match.score_two}")
-
-        while True:
-            score_one = input("Score player 1: ").replace(",", ".")
-            score_two = input("Score player 2: ").replace(",", ".")
-
-            try:
-                score_one = float(score_one)
-                score_two = float(score_two)
-            except ValueError:
-                print("Invalid score.")
-                continue
-
-            if (score_one, score_two) in ((1, 0), (0, 1), (0.5, 0.5)):
-                return score_one, score_two
-
-            print("Valid results are 1-0, 0-1 or 0.5-0.5.")
+        score_one = input("Score player 1: ")
+        score_two = input("Score player 2: ")
+        return score_one, score_two

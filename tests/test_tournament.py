@@ -85,6 +85,21 @@ class TournamentValidationTestCase(unittest.TestCase):
         mock_save_tournament.assert_called_once()
 
     @patch("controllers.tournament_controller.save_tournament")
+    def test_controller_uses_default_round_count(self, mock_save_tournament):
+        """Use four rounds when the user leaves the field empty."""
+        with patch.object(self.controller, "list_tournament_files", return_value=[]):
+            tournament = self.controller.create_tournament(
+                "Tournament",
+                "Thann",
+                "2026-09-10",
+                "2026-09-11",
+                number_of_rounds="",
+            )
+
+        self.assertEqual(tournament.number_of_rounds, 4)
+        mock_save_tournament.assert_called_once()
+
+    @patch("controllers.tournament_controller.save_tournament")
     def test_controller_rejects_missing_required_data(self, mock_save_tournament):
         """Reject missing required tournament data."""
         invalid_values = [

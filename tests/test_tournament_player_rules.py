@@ -41,6 +41,16 @@ class TournamentPlayerRulesTestCase(unittest.TestCase):
         )
 
     @patch("controllers.tournament_controller.save_tournament")
+    def test_add_player_rejects_after_first_round(self, mock_save_tournament):
+        """Reject adding a player after the tournament starts."""
+        self.tournament.add_round(Round("Round 1"))
+
+        with self.assertRaises(ValueError):
+            self.controller.add_player(self.tournament, self.player)
+
+        mock_save_tournament.assert_not_called()
+
+    @patch("controllers.tournament_controller.save_tournament")
     def test_add_player_rejects_duplicate_player(self, mock_save_tournament):
         """Reject a player already registered in the tournament."""
         self.tournament.add_player(self.player)
