@@ -245,7 +245,9 @@ class ApplicationController:
             choice = self.tournament_view.get_choice()
 
             if choice == "1":
-                self.report_view.display_rounds(self.current_tournament.rounds)
+                self.tournament_view.display_rounds(
+                    self.current_tournament.rounds
+                )
 
             elif choice == "2":
                 try:
@@ -257,14 +259,24 @@ class ApplicationController:
                         round_,
                     )
                 except ValueError as error:
-                    print(error)
+                    self.tournament_view.display_message(
+                        str(error),
+                        "Rounds",
+                    )
                     continue
 
-                print(f"{round_.name} created.")
+                self.update_screen_context()
+                self.tournament_view.display_message(
+                    f"{round_.name} created.",
+                    "Rounds",
+                )
 
             elif choice == "3":
                 if not self.current_tournament.rounds:
-                    print("No round available.")
+                    self.tournament_view.display_message(
+                        "No round available.",
+                        "Rounds",
+                    )
                     continue
 
                 self.tournament_view.display_round_choices(
@@ -279,11 +291,20 @@ class ApplicationController:
                     round_index = int(round_choice) - 1
                     round_ = self.current_tournament.rounds[round_index]
                 except (ValueError, IndexError):
-                    print("Invalid round.")
+                    self.tournament_view.display_message(
+                        "Invalid round.",
+                        "Rounds",
+                    )
                     continue
 
+                match_message = None
+
                 while True:
-                    self.tournament_view.display_matches(round_)
+                    self.tournament_view.display_matches(
+                        round_,
+                        match_message,
+                    )
+                    match_message = None
                     match_choice = self.tournament_view.get_match_choice()
 
                     if match_choice == "0":
@@ -293,7 +314,7 @@ class ApplicationController:
                         match_index = int(match_choice) - 1
                         match = round_.matches[match_index]
                     except (ValueError, IndexError):
-                        print("Invalid match.")
+                        match_message = "Invalid match."
                         continue
 
                     score_one, score_two = self.tournament_view.get_match_result(
@@ -308,10 +329,10 @@ class ApplicationController:
                             score_two,
                         )
                     except ValueError as error:
-                        print(error)
+                        match_message = str(error)
                         continue
 
-                    print("Result saved.")
+                    match_message = "Result saved."
 
             elif choice == "4":
                 round_ = self.round_controller.get_open_round(
@@ -319,7 +340,10 @@ class ApplicationController:
                 )
 
                 if round_ is None:
-                    print("No open round available.")
+                    self.tournament_view.display_message(
+                        "No open round available.",
+                        "Rounds",
+                    )
                     continue
 
                 try:
@@ -328,16 +352,26 @@ class ApplicationController:
                         round_,
                     )
                 except ValueError as error:
-                    print(error)
+                    self.tournament_view.display_message(
+                        str(error),
+                        "Rounds",
+                    )
                     continue
 
-                print(f"{round_.name} closed.")
+                self.update_screen_context()
+                self.tournament_view.display_message(
+                    f"{round_.name} closed.",
+                    "Rounds",
+                )
 
             elif choice == "0":
                 break
 
             else:
-                print("Invalid choice.")
+                self.tournament_view.display_message(
+                    "Invalid choice.",
+                    "Rounds",
+                )
 
     def select_report_tournament(self):
         """Select a saved tournament for a report."""
