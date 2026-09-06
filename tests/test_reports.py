@@ -86,7 +86,7 @@ class ReportsTestCase(unittest.TestCase):
         """Load the tournament selected from the reports menu."""
         controller = ApplicationController.__new__(ApplicationController)
         controller.tournament_controller = MagicMock()
-        controller.tournament_view = MagicMock()
+        controller.report_view = MagicMock()
         tournament = Tournament(
             "September",
             "Thann",
@@ -96,12 +96,15 @@ class ReportsTestCase(unittest.TestCase):
         controller.tournament_controller.list_tournament_files.return_value = [
             "September.json"
         ]
-        controller.tournament_view.get_filename.return_value = "September.json"
+        controller.report_view.get_filename.return_value = "September.json"
         controller.tournament_controller.load_tournament.return_value = tournament
 
         selected = controller.select_report_tournament()
 
         self.assertIs(selected, tournament)
+        controller.report_view.display_tournament_files.assert_called_once_with(
+            ["September.json"]
+        )
         controller.tournament_controller.load_tournament.assert_called_once_with(
             "September.json"
         )
