@@ -42,7 +42,10 @@ class ApplicationController:
     def run(self):
         """Run the application."""
         if self.player_controller.load_error is not None:
-            print(self.player_controller.load_error)
+            self.main_menu_view.display_message(
+                self.player_controller.load_error,
+                "Players registry error",
+            )
 
         while True:
             self.update_screen_context()
@@ -56,10 +59,11 @@ class ApplicationController:
             elif choice == "3":
                 self.display_reports()
             elif choice == "0":
-                print("Goodbye.")
+                self.main_menu_view.display_message("Goodbye.")
+                self.main_menu_view.display_menu()
                 break
             else:
-                print("Invalid choice.")
+                self.main_menu_view.display_message("Invalid choice.")
 
     def manage_players(self):
         """Manage players."""
@@ -72,9 +76,14 @@ class ApplicationController:
                 player_data = self.player_view.get_player_data()
 
                 try:
-                    self.player_controller.create_player(*player_data)
+                    player = self.player_controller.create_player(*player_data)
                 except ValueError as error:
-                    print(error)
+                    self.player_view.display_message(str(error))
+                    continue
+
+                self.player_view.display_message(
+                    f"{player.last_name} {player.first_name} added."
+                )
 
             elif choice == "2":
                 players = self.player_controller.list_players()
@@ -96,7 +105,7 @@ class ApplicationController:
                 try:
                     self.player_controller.update_player(player, *player_data)
                 except ValueError as error:
-                    print(error)
+                    self.player_view.display_message(str(error))
                     continue
 
                 self.player_view.display_player(player)
@@ -109,11 +118,13 @@ class ApplicationController:
                     continue
 
                 self.player_controller.delete_player(player)
-                print("Player deleted.")
+                self.player_view.display_message(
+                    f"{player.last_name} {player.first_name} deleted."
+                )
             elif choice == "0":
                 break
             else:
-                print("Invalid choice.")
+                self.player_view.display_message("Invalid choice.")
 
     def manage_tournaments(self):
         """Manage tournaments."""
@@ -130,7 +141,10 @@ class ApplicationController:
                         *tournament_data
                     )
                 except ValueError as error:
-                    print(error)
+                    self.tournament_view.display_message(
+                        str(error),
+                        "Tournaments",
+                    )
                     continue
 
                 self.tournament_view.display_tournament(tournament)
@@ -153,7 +167,10 @@ class ApplicationController:
                         self.tournament_controller.load_tournament(filename)
                     )
                 except ValueError as error:
-                    print(error)
+                    self.tournament_view.display_message(
+                        str(error),
+                        "Tournaments",
+                    )
                     continue
 
                 self.manage_loaded_tournament()
@@ -162,7 +179,10 @@ class ApplicationController:
                 break
 
             else:
-                print("Invalid choice.")
+                self.tournament_view.display_message(
+                    "Invalid choice.",
+                    "Tournaments",
+                )
 
     def manage_loaded_tournament(self):
         """Manage a loaded tournament."""
@@ -185,7 +205,10 @@ class ApplicationController:
             elif choice == "0":
                 break
             else:
-                print("Invalid choice.")
+                self.tournament_view.display_message(
+                    "Invalid choice.",
+                    "Tournament",
+                )
 
     def manage_tournament_players(self):
         """Manage players in the loaded tournament."""
@@ -398,17 +421,18 @@ class ApplicationController:
     def select_report_tournament(self):
         """Select a saved tournament for a report."""
         filenames = self.tournament_controller.list_tournament_files()
-        self.tournament_view.display_tournament_files(filenames)
+        self.report_view.display_tournament_files(filenames)
 
         if not filenames:
             return None
 
-        filename = self.tournament_view.get_filename()
+        self.report_view.display_menu()
+        filename = self.report_view.get_filename()
 
         try:
             return self.tournament_controller.load_tournament(filename)
         except ValueError as error:
-            print(error)
+            self.report_view.display_message(str(error))
             return None
 
     def display_reports(self):
@@ -426,7 +450,7 @@ class ApplicationController:
                 try:
                     tournaments = self.tournament_controller.list_saved_tournaments()
                 except ValueError as error:
-                    print(error)
+                    self.report_view.display_message(str(error))
                     continue
 
                 self.report_view.display_tournaments(tournaments)
@@ -468,4 +492,4 @@ class ApplicationController:
                 break
 
             else:
-                print("Invalid choice.")
+                self.report_view.display_message("Invalid choice.")
