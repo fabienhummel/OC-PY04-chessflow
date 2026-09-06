@@ -1,23 +1,56 @@
+from views.console_screen import ConsoleScreen
+
+
 class PlayerView:
     """Display player-related information."""
 
+    MENU_LINES = [
+        "1. Add a player",
+        "2. List players",
+        "3. Search a player",
+        "4. Edit a player",
+        "5. Delete a player",
+        "0. Back",
+    ]
+
+    def __init__(self):
+        """Initialize the player output area."""
+        self.output_lines = []
+        self.screen_active = False
+
     def display_menu(self):
-        """Display the player menu."""
-        print("\n=== Manage players ===")
-        print("1. Add a player")
-        print("2. List players")
-        print("3. Search a player")
-        print("4. Edit a player")
-        print("5. Delete a player")
-        print("0. Back")
+        """Display the player menu and current output."""
+        self.screen_active = True
+        ConsoleScreen.render(
+            "ChessFlow > Players",
+            self.MENU_LINES,
+            self.output_lines,
+        )
 
     def get_choice(self):
         """Get the user choice."""
-        return input("Choose an option: ")
+        choice = input("Choose an option: ")
+
+        if choice == "0":
+            self.output_lines = []
+            self.screen_active = False
+            ConsoleScreen.clear()
+
+        return choice
+
+    def set_output(self, title, lines):
+        """Store player lines for the screen or display them directly."""
+        if self.screen_active:
+            self.output_lines = [title, "", *lines]
+            return
+
+        print(f"\n=== {title} ===")
+        for line in lines:
+            print(line)
 
     def get_player_data(self):
         """Get player data from the user."""
-        print("\n=== Add a player ===")
+        print("\nAdd a player")
         last_name = input("Last name: ")
         first_name = input("First name: ")
         birth_date = input("Birth date (YYYY-MM-DD): ")
@@ -52,24 +85,30 @@ class PlayerView:
     def display_player(self, player):
         """Display one player."""
         if player is None:
-            print("Player not found.")
+            self.set_output("Player", ["Player not found."])
             return
 
-        print(
-            f"{player.last_name} {player.first_name} - "
-            f"{player.birth_date} - {player.national_id}"
+        self.set_output(
+            "Player",
+            [
+                (
+                    f"{player.last_name} {player.first_name} - "
+                    f"{player.birth_date} - {player.national_id}"
+                )
+            ],
         )
 
     def display_players(self, players):
         """Display a list of players."""
-        print("\n=== Players ===")
-
         if not players:
-            print("No players registered.")
+            self.set_output("Players", ["No players registered."])
             return
 
-        for player in players:
-            print(
+        lines = [
+            (
                 f"{player.last_name} {player.first_name} - "
                 f"{player.birth_date} - {player.national_id}"
             )
+            for player in players
+        ]
+        self.set_output("Players", lines)
