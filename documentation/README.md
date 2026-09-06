@@ -2,7 +2,7 @@
 
 Ce dossier regroupe les documents de cadrage, de conception, de spécification, de veille et de planification de ChessFlow.
 
-Les documents décrivent l'application telle qu'elle est livrée avec l'architecture MVC simplifiée retenue pour ChessFlow 1.0.
+Les documents décrivent l'application telle qu'elle est livrée avec l'architecture MVC simplifiée retenue pour ChessFlow 1.0 et son interface console finale.
 
 ## Organisation
 
@@ -16,12 +16,13 @@ Les documents décrivent l'application telle qu'elle est livrée avec l'architec
 
 ## Références de version
 
-- Version documentaire : 1.1 finale
+- Version documentaire : 1.2 finale
 - Date de consolidation : 6 septembre 2026
 - Application cible : ChessFlow 1.0
 - Environnement de développement validé : CPython 3.13.9
 - Qualité : Flake8 7.3.0 et flake8-html 0.4.3
-- Vérification automatisée : 72 tests `unittest`
+- Vérification automatisée : 75 tests `unittest`
+- Interface finale : rendu console en zones avec contexte tournoi/ronde et zone `OUTPUT`
 
 Les documents sont maintenus en Markdown pour rester lisibles, versionnables et faciles à mettre à jour.
 Les diagrammes sont maintenus en PlantUML avec leurs exports SVG correspondants.

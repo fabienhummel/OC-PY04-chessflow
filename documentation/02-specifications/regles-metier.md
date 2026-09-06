@@ -22,7 +22,8 @@ Les validations de création et de modification sont appliquées par `PlayerCont
 - La date de fin ne peut pas être antérieure à la date de début.
 - Le nombre de rondes vaut 4 par défaut et doit être strictement positif.
 - Un joueur ne peut être inscrit qu'une seule fois au même tournoi.
-- Les participants peuvent être ajoutés uniquement tant qu'aucune ronde n'a été créée.
+- Les participants peuvent être ajoutés ou retirés uniquement tant qu'aucune ronde n'a été créée.
+- Le retrait d'un participant se fait par son identifiant national et échoue si ce participant n'est pas inscrit au tournoi.
 - La première ronde ne peut être créée qu'avec au moins deux participants et un nombre pair de joueurs.
 - Aucun mécanisme de joueur exempt ou de « bye » n'est géré.
 - Le nombre de rondes créées ne peut pas dépasser le nombre prévu.
@@ -81,7 +82,7 @@ Les validations des informations du tournoi et des inscriptions sont appliquées
 
 1. Deux joueurs ne partagent jamais le même identifiant national dans le registre général.
 2. Un participant apparaît au maximum une fois dans un tournoi.
-3. Aucun participant ne peut être ajouté après la création de la première ronde.
+3. Aucun participant ne peut être ajouté ou retiré après la création de la première ronde.
 4. Une ronde ne peut être créée qu'avec un nombre pair de participants et au moins une paire.
 5. Un tournoi possède au maximum une ronde non clôturée.
 6. Une ronde de N participants contient exactement N/2 matchs.

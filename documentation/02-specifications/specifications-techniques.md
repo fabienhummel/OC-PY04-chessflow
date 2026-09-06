@@ -9,9 +9,9 @@ Utilisateur
     |
     v
 Vues console <-> ApplicationController
-                    |
-                    +--> PlayerController
-                    +--> TournamentController
+    |               |
+    v               +--> PlayerController
+ConsoleScreen       +--> TournamentController
                     +--> RoundController
                     +--> MatchController
                               |
@@ -23,14 +23,29 @@ Vues console <-> ApplicationController
 
 - **Modèles** : représenter les données métier, leurs comportements simples et leur sérialisation.
 - **Vues** : afficher les informations et recueillir les saisies utilisateur avec `input()`.
+- **ConsoleScreen** : centraliser l’effacement et le rendu cohérent des écrans console, du contexte global et de la zone `OUTPUT`.
 - **Contrôleurs métier** : valider les entrées, appliquer les règles applicatives et déclencher les sauvegardes.
-- **ApplicationController** : piloter les menus et relier les vues aux contrôleurs spécialisés.
+- **ApplicationController** : piloter les menus, relier les vues aux contrôleurs spécialisés et fournir le contexte du tournoi/round courant à l’affichage.
 - **Persistance** : centraliser les accès aux fichiers et les lectures/écritures JSON via `persistence/json_repository.py`.
 - **Point d'entrée** : initialiser l'application et lancer `ApplicationController`.
 
 Les modèles n'appellent ni `input()`, ni les vues, ni les contrôleurs, ni la persistance.
 
-## 2. Environnement
+## 2. Interface console
+
+L’interface reste une interface en ligne de commande classique sans framework TUI externe. Elle est rendue comme un écran à deux zones :
+
+- la partie supérieure affiche le chemin de navigation, le contexte courant et le menu actif ;
+- la zone `OUTPUT` affiche le résultat, la confirmation ou l’erreur de l’action courante ;
+- chaque nouvel affichage remplace l’écran précédent afin d’éviter l’accumulation d’anciens menus dans le terminal ;
+- le tournoi chargé est affiché dans l’en-tête dans toute l’application ;
+- lorsqu’une ronde est ouverte, son nom est également affiché dans l’en-tête ;
+- après clôture de la ronde, son contexte disparaît automatiquement ;
+- les sous-menus utilisent `0` pour revenir en arrière.
+
+`views/console_screen.py` ne connaît aucune règle métier. Il reçoit uniquement des lignes de contexte, de menu et de sortie à rendre.
+
+## 3. Environnement
 
 | Élément | Choix retenu |
 | --- | --- |
@@ -38,7 +53,7 @@ Les modèles n'appellent ni `input()`, ni les vues, ni les contrôleurs, ni la p
 | Version de développement | CPython 3.13.9 |
 | Isolation | Environnement virtuel `.venv` |
 | Gestion des dépendances | `pip` et `requirements.txt` |
-| Interface | Console |
+| Interface | Console avec rendu partagé `ConsoleScreen` |
 | Persistance | Fichiers JSON locaux |
 | Tests | `unittest` |
 | Qualité | Flake8 7.3.0, longueur maximale 119 |
@@ -48,7 +63,7 @@ Les modèles n'appellent ni `input()`, ni les vues, ni les contrôleurs, ni la p
 
 L'application métier utilise uniquement la bibliothèque standard. Les dépendances du fichier `requirements.txt` servent au contrôle qualité et au rapport HTML.
 
-## 3. Arborescence livrée
+## 4. Arborescence livrée
 
 ```text
 OC-PY04-chessflow/
@@ -67,6 +82,7 @@ OC-PY04-chessflow/
 │   └── json_repository.py
 ├── tests/
 ├── views/
+│   └── console_screen.py
 ├── .flake8
 ├── .gitignore
 ├── main.py
@@ -78,7 +94,7 @@ OC-PY04-chessflow/
 
 Les fichiers et dossiers générés localement, comme `.venv`, `__pycache__`, les métadonnées d'IDE et les données d'utilisation, sont exclus par `.gitignore`.
 
-## 4. Modèles métier
+## 5. Modèles métier
 
 ### `Player`
 
@@ -167,7 +183,7 @@ Responsabilités :
 
 La validation des résultats autorisés est effectuée par `MatchController`.
 
-## 5. Contrôleurs
+## 6. Contrôleurs
 
 ### `PlayerController`
 
@@ -187,8 +203,9 @@ Responsabilités principales :
 
 - valider les informations nécessaires à la création d'un tournoi ;
 - créer, lister et charger les tournois ;
-- ajouter les participants avant le démarrage de la première ronde ;
+- ajouter ou retirer les participants avant le démarrage de la première ronde ;
 - empêcher les doublons de participants ;
+- refuser la modification de la liste des participants une fois le tournoi commencé ;
 - déclencher les sauvegardes liées aux informations du tournoi.
 
 ### `RoundController`
@@ -219,11 +236,12 @@ Responsabilités principales :
 - piloter les menus et sous-menus ;
 - relier les vues aux contrôleurs métier ;
 - gérer le tournoi actuellement chargé ;
-- présenter les erreurs applicatives à l'utilisateur.
+- déterminer la ronde ouverte pour le contexte d’affichage ;
+- transmettre les erreurs et confirmations à la vue active.
 
 `ApplicationController` ne porte pas les règles métier des joueurs, tournois, rondes ou résultats.
 
-## 6. Relations UML
+## 7. Relations UML
 
 | Relation | Type | Cardinalité |
 | --- | --- | --- |
@@ -234,7 +252,7 @@ Responsabilités principales :
 
 Aucune classe abstraite ni hiérarchie d'héritage ne sont utilisées.
 
-## 7. Persistance JSON
+## 8. Persistance JSON
 
 ### Chemins
 
@@ -261,7 +279,7 @@ La couche de persistance contrôle la syntaxe JSON, le type général des struct
 
 Les écritures utilisent directement les fichiers cibles. Il n'y a pas de mécanisme de remplacement atomique dans la version 1.0.
 
-## 8. Algorithme d'appariement
+## 9. Algorithme d'appariement
 
 L'algorithme est géré par `RoundController`.
 
@@ -284,7 +302,7 @@ L'algorithme est géré par `RoundController`.
 
 L'objectif est un algorithme simple et explicable qui évite les revanches autant que possible, sans recherche exhaustive du système suisse.
 
-## 9. Calcul des scores et classement
+## 10. Calcul des scores et classement
 
 Les scores ne sont pas stockés comme attributs de `Player` ou `Tournament`.
 
@@ -294,7 +312,7 @@ Les scores ne sont pas stockés comme attributs de `Player` ou `Tournament`.
 
 Cette approche garantit qu'après rechargement d'un tournoi, les scores sont reconstruits automatiquement depuis les résultats persistés.
 
-## 10. Validation des entrées
+## 11. Validation des entrées
 
 ### `PlayerController`
 
@@ -310,7 +328,8 @@ Cette approche garantit qu'après rechargement d'un tournoi, les scores sont rec
 - date de fin supérieure ou égale à la date de début ;
 - nombre de rondes converti en entier strictement positif, avec valeur 4 par défaut ;
 - doublon de participant refusé ;
-- ajout de participant interdit après la première ronde.
+- ajout et retrait d’un participant interdits après la création de la première ronde ;
+- retrait d’un participant inconnu refusé.
 
 ### `RoundController`
 
@@ -327,7 +346,7 @@ Cette approche garantit qu'après rechargement d'un tournoi, les scores sont rec
 
 Les vues restent responsables de la saisie et de l'affichage, sans appliquer ces validations métier.
 
-## 11. Qualité et vérification
+## 12. Qualité et vérification
 
 La configuration Flake8 utilise une longueur maximale de 119 caractères.
 
@@ -351,7 +370,7 @@ Les tests automatisés sont exécutés avec :
 python -m unittest discover -v
 ```
 
-La version actuelle comporte 72 tests passants.
+La version actuelle comporte 75 tests passants.
 
 Les vérifications couvrent notamment :
 
@@ -360,12 +379,13 @@ Les vérifications couvrent notamment :
 - sérialisation et désérialisation ;
 - persistance JSON et erreurs de chargement ;
 - unicité et tri des joueurs ;
+- ajout et retrait des participants avant démarrage ;
 - appariements et historique des rencontres ;
 - saisie des résultats et calcul des scores ;
 - règles de progression des rondes ;
 - indépendance des modèles vis-à-vis des vues et contrôleurs.
 
-## 12. Sécurité et robustesse
+## 13. Sécurité et robustesse
 
 - aucune donnée sensible ni aucun secret n'est nécessaire ;
 - aucune communication réseau n'est effectuée pendant l'usage métier ;
@@ -373,3 +393,9 @@ Les vérifications couvrent notamment :
 - les erreurs JSON sont remontées avec des messages explicites ;
 - le registre joueur n'est pas réécrit si son chargement a échoué ;
 - les données locales d'utilisation sont séparées du code source et ne sont pas versionnées.
+
+## 14. Validation finale
+
+La simplification de l’architecture a été fusionnée via la **PR GitHub #19 —** `refactor: simplify MVC architecture`.
+
+L’ergonomie console, le contexte global, la gestion homogène de la zone `OUTPUT` et la possibilité de retirer un participant avant le démarrage ont ensuite été fusionnés via la **PR GitHub #20 —** `feat: improve console layout and tournament workflow`.
