@@ -198,7 +198,7 @@ class ApplicationController:
                 players = self.tournament_controller.list_tournament_players(
                     self.current_tournament
                 )
-                self.player_view.display_players(players)
+                self.tournament_view.display_players(players)
             elif choice == "2":
                 national_id = self.tournament_view.get_player_national_id()
                 player = self.player_controller.find_player(national_id)
