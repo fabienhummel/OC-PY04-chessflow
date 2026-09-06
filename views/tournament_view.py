@@ -22,6 +22,7 @@ class TournamentView:
     PLAYERS_MENU_LINES = [
         "1. List tournament players",
         "2. Add a player",
+        "3. Remove a player",
         "0. Back",
     ]
 
@@ -165,8 +166,16 @@ class TournamentView:
         ]
         self.set_output("Tournament players", lines)
 
+    def get_filename(self):
+        """Get a tournament filename."""
+        return input("Tournament filename: ")
+
+    def get_player_national_id(self):
+        """Get a player national ID."""
+        return input("Player national chess ID (AA12345): ")
+
     def display_rounds(self, rounds):
-        """Display rounds and matches in the current output area."""
+        """Display tournament rounds in the current output area."""
         if not rounds:
             self.set_output("Rounds", ["No rounds registered."])
             return
@@ -195,14 +204,6 @@ class TournamentView:
 
         self.set_output("Rounds", lines)
 
-    def get_filename(self):
-        """Get a tournament filename."""
-        return input("Tournament filename: ")
-
-    def get_player_national_id(self):
-        """Get a player national ID."""
-        return input("Player national chess ID (AA12345): ")
-
     def display_round_choices(self, rounds):
         """Display rounds that can be selected."""
         lines = [
@@ -220,6 +221,9 @@ class TournamentView:
         """Display the matches of a round."""
         lines = []
 
+        if message:
+            lines.extend([message, ""])
+
         for index, match in enumerate(round_.matches, start=1):
             lines.append(
                 f"{index}. {match.player_one.last_name} "
@@ -229,10 +233,6 @@ class TournamentView:
             )
 
         lines.append("0. Back")
-
-        if message:
-            lines.extend(["", message])
-
         self.set_output(f"{round_.name} matches", lines)
 
     def get_match_choice(self):
