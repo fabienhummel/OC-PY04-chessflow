@@ -204,7 +204,10 @@ class ApplicationController:
                 player = self.player_controller.find_player(national_id)
 
                 if player is None:
-                    print("Player not found.")
+                    self.tournament_view.display_message(
+                        "Player not found.",
+                        "Tournament players",
+                    )
                     continue
 
                 try:
@@ -213,14 +216,26 @@ class ApplicationController:
                         player,
                     )
                 except ValueError as error:
-                    print(error)
+                    self.tournament_view.display_message(
+                        str(error),
+                        "Tournament players",
+                    )
                     continue
 
-                print("Player added to tournament.")
+                self.tournament_view.display_message(
+                    (
+                        f"{player.last_name} {player.first_name} "
+                        "added to tournament."
+                    ),
+                    "Tournament players",
+                )
             elif choice == "0":
                 break
             else:
-                print("Invalid choice.")
+                self.tournament_view.display_message(
+                    "Invalid choice.",
+                    "Tournament players",
+                )
 
     def manage_rounds(self):
         """Manage rounds in the loaded tournament."""
