@@ -49,6 +49,10 @@ class ReportView:
         for line in lines:
             print(line)
 
+    def display_message(self, message, title="Reports"):
+        """Display a message in the report output area."""
+        self.set_output(title, [message])
+
     def display_players(self, players):
         """Display players."""
         if not players:
