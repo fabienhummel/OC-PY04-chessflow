@@ -146,6 +146,21 @@ class TournamentView:
 
         self.set_output("Saved tournaments", filenames)
 
+    def display_players(self, players):
+        """Display players registered in the loaded tournament."""
+        if not players:
+            self.set_output("Tournament players", ["No players registered."])
+            return
+
+        lines = [
+            (
+                f"{player.last_name} {player.first_name} - "
+                f"{player.birth_date} - {player.national_id}"
+            )
+            for player in players
+        ]
+        self.set_output("Tournament players", lines)
+
     def get_filename(self):
         """Get a tournament filename."""
         return input("Tournament filename: ")
