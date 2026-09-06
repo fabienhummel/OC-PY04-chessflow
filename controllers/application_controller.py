@@ -2,6 +2,7 @@ from controllers.match_controller import MatchController
 from controllers.player_controller import PlayerController
 from controllers.round_controller import RoundController
 from controllers.tournament_controller import TournamentController
+from views.console_screen import ConsoleScreen
 from views.main_menu_view import MainMenuView
 from views.player_view import PlayerView
 from views.report_view import ReportView
@@ -23,12 +24,31 @@ class ApplicationController:
         self.report_view = ReportView()
         self.current_tournament = None
 
+    def update_screen_context(self):
+        """Update the tournament and open round shown on every screen."""
+        lines = []
+
+        if self.current_tournament is not None:
+            lines.append(f"Tournament: {self.current_tournament.name}")
+            open_round = self.round_controller.get_open_round(
+                self.current_tournament
+            )
+
+            if open_round is not None:
+                lines.append(f"Round: {open_round.name}")
+
+        ConsoleScreen.set_context(lines)
+
     def run(self):
         """Run the application."""
         if self.player_controller.load_error is not None:
-            print(self.player_controller.load_error)
+            self.main_menu_view.display_message(
+                self.player_controller.load_error,
+                "Players registry error",
+            )
 
         while True:
+            self.update_screen_context()
             self.main_menu_view.display_menu()
             choice = self.main_menu_view.get_choice()
 
@@ -39,14 +59,16 @@ class ApplicationController:
             elif choice == "3":
                 self.display_reports()
             elif choice == "0":
-                print("Goodbye.")
+                self.main_menu_view.display_message("Goodbye.")
+                self.main_menu_view.display_menu()
                 break
             else:
-                print("Invalid choice.")
+                self.main_menu_view.display_message("Invalid choice.")
 
     def manage_players(self):
         """Manage players."""
         while True:
+            self.update_screen_context()
             self.player_view.display_menu()
             choice = self.player_view.get_choice()
 
@@ -54,9 +76,14 @@ class ApplicationController:
                 player_data = self.player_view.get_player_data()
 
                 try:
-                    self.player_controller.create_player(*player_data)
+                    player = self.player_controller.create_player(*player_data)
                 except ValueError as error:
-                    print(error)
+                    self.player_view.display_message(str(error))
+                    continue
+
+                self.player_view.display_message(
+                    f"{player.last_name} {player.first_name} added."
+                )
 
             elif choice == "2":
                 players = self.player_controller.list_players()
@@ -78,7 +105,7 @@ class ApplicationController:
                 try:
                     self.player_controller.update_player(player, *player_data)
                 except ValueError as error:
-                    print(error)
+                    self.player_view.display_message(str(error))
                     continue
 
                 self.player_view.display_player(player)
@@ -91,15 +118,18 @@ class ApplicationController:
                     continue
 
                 self.player_controller.delete_player(player)
-                print("Player deleted.")
+                self.player_view.display_message(
+                    f"{player.last_name} {player.first_name} deleted."
+                )
             elif choice == "0":
                 break
             else:
-                print("Invalid choice.")
+                self.player_view.display_message("Invalid choice.")
 
     def manage_tournaments(self):
         """Manage tournaments."""
         while True:
+            self.update_screen_context()
             self.tournament_view.display_menu()
             choice = self.tournament_view.get_choice()
 
@@ -111,7 +141,10 @@ class ApplicationController:
                         *tournament_data
                     )
                 except ValueError as error:
-                    print(error)
+                    self.tournament_view.display_message(
+                        str(error),
+                        "Tournaments",
+                    )
                     continue
 
                 self.tournament_view.display_tournament(tournament)
@@ -134,7 +167,10 @@ class ApplicationController:
                         self.tournament_controller.load_tournament(filename)
                     )
                 except ValueError as error:
-                    print(error)
+                    self.tournament_view.display_message(
+                        str(error),
+                        "Tournaments",
+                    )
                     continue
 
                 self.manage_loaded_tournament()
@@ -143,11 +179,15 @@ class ApplicationController:
                 break
 
             else:
-                print("Invalid choice.")
+                self.tournament_view.display_message(
+                    "Invalid choice.",
+                    "Tournaments",
+                )
 
     def manage_loaded_tournament(self):
         """Manage a loaded tournament."""
         while True:
+            self.update_screen_context()
             self.tournament_view.display_loaded_menu()
             choice = self.tournament_view.get_choice()
 
@@ -161,15 +201,19 @@ class ApplicationController:
                 ranking = self.round_controller.get_ranking_with_scores(
                     self.current_tournament
                 )
-                self.report_view.display_ranking(ranking)
+                self.tournament_view.display_ranking(ranking)
             elif choice == "0":
                 break
             else:
-                print("Invalid choice.")
+                self.tournament_view.display_message(
+                    "Invalid choice.",
+                    "Tournament",
+                )
 
     def manage_tournament_players(self):
         """Manage players in the loaded tournament."""
         while True:
+            self.update_screen_context()
             self.tournament_view.display_players_menu()
             choice = self.tournament_view.get_choice()
 
@@ -177,13 +221,16 @@ class ApplicationController:
                 players = self.tournament_controller.list_tournament_players(
                     self.current_tournament
                 )
-                self.player_view.display_players(players)
+                self.tournament_view.display_players(players)
             elif choice == "2":
                 national_id = self.tournament_view.get_player_national_id()
                 player = self.player_controller.find_player(national_id)
 
                 if player is None:
-                    print("Player not found.")
+                    self.tournament_view.display_message(
+                        "Player not found.",
+                        "Tournament players",
+                    )
                     continue
 
                 try:
@@ -192,23 +239,60 @@ class ApplicationController:
                         player,
                     )
                 except ValueError as error:
-                    print(error)
+                    self.tournament_view.display_message(
+                        str(error),
+                        "Tournament players",
+                    )
                     continue
 
-                print("Player added to tournament.")
+                self.tournament_view.display_message(
+                    (
+                        f"{player.last_name} {player.first_name} "
+                        "added to tournament."
+                    ),
+                    "Tournament players",
+                )
+            elif choice == "3":
+                national_id = self.tournament_view.get_player_national_id()
+
+                try:
+                    player = self.tournament_controller.remove_player(
+                        self.current_tournament,
+                        national_id,
+                    )
+                except ValueError as error:
+                    self.tournament_view.display_message(
+                        str(error),
+                        "Tournament players",
+                    )
+                    continue
+
+                self.tournament_view.display_message(
+                    (
+                        f"{player.last_name} {player.first_name} "
+                        "removed from tournament."
+                    ),
+                    "Tournament players",
+                )
             elif choice == "0":
                 break
             else:
-                print("Invalid choice.")
+                self.tournament_view.display_message(
+                    "Invalid choice.",
+                    "Tournament players",
+                )
 
     def manage_rounds(self):
         """Manage rounds in the loaded tournament."""
         while True:
+            self.update_screen_context()
             self.tournament_view.display_rounds_menu()
             choice = self.tournament_view.get_choice()
 
             if choice == "1":
-                self.report_view.display_rounds(self.current_tournament.rounds)
+                self.tournament_view.display_rounds(
+                    self.current_tournament.rounds
+                )
 
             elif choice == "2":
                 try:
@@ -220,14 +304,24 @@ class ApplicationController:
                         round_,
                     )
                 except ValueError as error:
-                    print(error)
+                    self.tournament_view.display_message(
+                        str(error),
+                        "Rounds",
+                    )
                     continue
 
-                print(f"{round_.name} created.")
+                self.update_screen_context()
+                self.tournament_view.display_message(
+                    f"{round_.name} created.",
+                    "Rounds",
+                )
 
             elif choice == "3":
                 if not self.current_tournament.rounds:
-                    print("No round available.")
+                    self.tournament_view.display_message(
+                        "No round available.",
+                        "Rounds",
+                    )
                     continue
 
                 self.tournament_view.display_round_choices(
@@ -242,11 +336,20 @@ class ApplicationController:
                     round_index = int(round_choice) - 1
                     round_ = self.current_tournament.rounds[round_index]
                 except (ValueError, IndexError):
-                    print("Invalid round.")
+                    self.tournament_view.display_message(
+                        "Invalid round.",
+                        "Rounds",
+                    )
                     continue
 
+                match_message = None
+
                 while True:
-                    self.tournament_view.display_matches(round_)
+                    self.tournament_view.display_matches(
+                        round_,
+                        match_message,
+                    )
+                    match_message = None
                     match_choice = self.tournament_view.get_match_choice()
 
                     if match_choice == "0":
@@ -256,7 +359,7 @@ class ApplicationController:
                         match_index = int(match_choice) - 1
                         match = round_.matches[match_index]
                     except (ValueError, IndexError):
-                        print("Invalid match.")
+                        match_message = "Invalid match."
                         continue
 
                     score_one, score_two = self.tournament_view.get_match_result(
@@ -271,10 +374,10 @@ class ApplicationController:
                             score_two,
                         )
                     except ValueError as error:
-                        print(error)
+                        match_message = str(error)
                         continue
 
-                    print("Result saved.")
+                    match_message = "Result saved."
 
             elif choice == "4":
                 round_ = self.round_controller.get_open_round(
@@ -282,7 +385,10 @@ class ApplicationController:
                 )
 
                 if round_ is None:
-                    print("No open round available.")
+                    self.tournament_view.display_message(
+                        "No open round available.",
+                        "Rounds",
+                    )
                     continue
 
                 try:
@@ -291,36 +397,48 @@ class ApplicationController:
                         round_,
                     )
                 except ValueError as error:
-                    print(error)
+                    self.tournament_view.display_message(
+                        str(error),
+                        "Rounds",
+                    )
                     continue
 
-                print(f"{round_.name} closed.")
+                self.update_screen_context()
+                self.tournament_view.display_message(
+                    f"{round_.name} closed.",
+                    "Rounds",
+                )
 
             elif choice == "0":
                 break
 
             else:
-                print("Invalid choice.")
+                self.tournament_view.display_message(
+                    "Invalid choice.",
+                    "Rounds",
+                )
 
     def select_report_tournament(self):
         """Select a saved tournament for a report."""
         filenames = self.tournament_controller.list_tournament_files()
-        self.tournament_view.display_tournament_files(filenames)
+        self.report_view.display_tournament_files(filenames)
 
         if not filenames:
             return None
 
-        filename = self.tournament_view.get_filename()
+        self.report_view.display_menu()
+        filename = self.report_view.get_filename()
 
         try:
             return self.tournament_controller.load_tournament(filename)
         except ValueError as error:
-            print(error)
+            self.report_view.display_message(str(error))
             return None
 
     def display_reports(self):
         """Display the reports menu."""
         while True:
+            self.update_screen_context()
             self.report_view.display_menu()
             choice = self.report_view.get_choice()
 
@@ -332,7 +450,7 @@ class ApplicationController:
                 try:
                     tournaments = self.tournament_controller.list_saved_tournaments()
                 except ValueError as error:
-                    print(error)
+                    self.report_view.display_message(str(error))
                     continue
 
                 self.report_view.display_tournaments(tournaments)
@@ -374,4 +492,4 @@ class ApplicationController:
                 break
 
             else:
-                print("Invalid choice.")
+                self.report_view.display_message("Invalid choice.")

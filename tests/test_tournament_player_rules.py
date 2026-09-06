@@ -8,7 +8,7 @@ from models.tournament import Tournament
 
 
 class TournamentPlayerRulesTestCase(unittest.TestCase):
-    """Test when players can be added to a tournament."""
+    """Test when players can be changed in a tournament."""
 
     def setUp(self):
         """Create a controller and tournament."""
@@ -71,6 +71,46 @@ class TournamentPlayerRulesTestCase(unittest.TestCase):
             self.tournament,
             "Test tournament.json",
         )
+
+    @patch("controllers.tournament_controller.save_tournament")
+    def test_remove_player_before_first_round(self, mock_save_tournament):
+        """Remove and save a tournament player before the tournament starts."""
+        self.tournament.add_player(self.player)
+
+        removed_player = self.controller.remove_player(
+            self.tournament,
+            "ab12345",
+        )
+
+        self.assertIs(removed_player, self.player)
+        self.assertEqual(self.tournament.players, [])
+        mock_save_tournament.assert_called_once_with(
+            self.tournament,
+            "Test tournament.json",
+        )
+
+    @patch("controllers.tournament_controller.save_tournament")
+    def test_remove_player_rejects_after_first_round(self, mock_save_tournament):
+        """Reject removing a player after the tournament starts."""
+        self.tournament.add_player(self.player)
+        self.tournament.add_round(Round("Round 1"))
+
+        with self.assertRaises(ValueError):
+            self.controller.remove_player(
+                self.tournament,
+                self.player.national_id,
+            )
+
+        self.assertEqual(self.tournament.players, [self.player])
+        mock_save_tournament.assert_not_called()
+
+    @patch("controllers.tournament_controller.save_tournament")
+    def test_remove_player_rejects_unknown_player(self, mock_save_tournament):
+        """Reject removing a player not registered in the tournament."""
+        with self.assertRaises(ValueError):
+            self.controller.remove_player(self.tournament, "ZZ99999")
+
+        mock_save_tournament.assert_not_called()
 
 
 if __name__ == "__main__":

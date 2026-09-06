@@ -1,106 +1,174 @@
+from views.console_screen import ConsoleScreen
+
+
 class ReportView:
     """Display application reports."""
 
+    MENU_LINES = [
+        "1. List all players",
+        "2. List all tournaments",
+        "3. Tournament details",
+        "4. Tournament players",
+        "5. Tournament rounds and matches",
+        "6. Tournament ranking",
+        "0. Back",
+    ]
+
+    def __init__(self):
+        """Initialize the report output area."""
+        self.output_lines = []
+        self.screen_active = False
+
     def display_menu(self):
-        """Display the reports menu."""
-        print("\n=== Reports ===")
-        print("1. List all players")
-        print("2. List all tournaments")
-        print("3. Tournament details")
-        print("4. Tournament players")
-        print("5. Tournament rounds and matches")
-        print("6. Tournament ranking")
-        print("0. Back")
+        """Display the reports menu and current output."""
+        self.screen_active = True
+        ConsoleScreen.render(
+            "ChessFlow > Reports",
+            self.MENU_LINES,
+            self.output_lines,
+        )
 
     def get_choice(self):
         """Get the user choice."""
-        return input("Choose an option: ")
+        choice = input("Choose an option: ")
+
+        if choice == "0":
+            self.output_lines = []
+            self.screen_active = False
+            ConsoleScreen.clear()
+
+        return choice
+
+    def set_output(self, title, lines):
+        """Store report lines for the screen or display them directly."""
+        if self.screen_active:
+            self.output_lines = [title, "", *lines]
+            return
+
+        print(f"\n=== {title} ===")
+        for line in lines:
+            print(line)
+
+    def display_message(self, message, title="Reports"):
+        """Display a message in the report output area."""
+        self.set_output(title, [message])
+
+    def display_tournament_files(self, filenames):
+        """Display saved tournament filenames for report selection."""
+        if not filenames:
+            self.set_output("Select a tournament", ["No saved tournaments."])
+            return
+
+        self.set_output("Select a tournament", filenames)
+
+    def get_filename(self):
+        """Get a tournament filename for a report."""
+        return input("Tournament filename: ")
 
     def display_players(self, players):
         """Display players."""
-        print("\n=== Players report ===")
-
         if not players:
-            print("No players registered.")
+            self.set_output("Players report", ["No players registered."])
             return
 
-        for player in players:
-            print(
+        lines = [
+            (
                 f"{player.last_name} {player.first_name} - "
                 f"{player.birth_date} - {player.national_id}"
             )
+            for player in players
+        ]
+        self.set_output("Players report", lines)
 
     def display_tournaments(self, tournaments):
         """Display tournaments."""
-        print("\n=== Tournaments report ===")
-
         if not tournaments:
-            print("No tournaments registered.")
+            self.set_output("Tournaments report", ["No tournaments registered."])
             return
 
-        for tournament in tournaments:
-            print(
+        lines = [
+            (
                 f"{tournament.name} - {tournament.location} - "
                 f"{tournament.start_date} to {tournament.end_date}"
             )
+            for tournament in tournaments
+        ]
+        self.set_output("Tournaments report", lines)
 
     def display_tournament_details(self, tournament):
         """Display tournament details."""
-        print("\n=== Tournament details ===")
-        print(f"Name: {tournament.name}")
-        print(f"Location: {tournament.location}")
-        print(f"Start date: {tournament.start_date}")
-        print(f"End date: {tournament.end_date}")
-        print(f"Description: {tournament.description}")
-        print(f"Number of rounds: {tournament.number_of_rounds}")
-        print(f"Current round: {tournament.current_round}")
+        lines = [
+            f"Name: {tournament.name}",
+            f"Location: {tournament.location}",
+            f"Start date: {tournament.start_date}",
+            f"End date: {tournament.end_date}",
+            f"Description: {tournament.description}",
+            f"Number of rounds: {tournament.number_of_rounds}",
+            f"Current round: {tournament.current_round}",
+        ]
+        self.set_output("Tournament details", lines)
 
     def display_tournament_players(self, tournament_name, players):
         """Display players registered in a tournament."""
-        print(f"\n=== {tournament_name} players ===")
-
         if not players:
-            print("No players registered.")
+            self.set_output(
+                f"{tournament_name} players",
+                ["No players registered."],
+            )
             return
 
-        for player in players:
-            print(
+        lines = [
+            (
                 f"{player.last_name} {player.first_name} - "
                 f"{player.birth_date} - {player.national_id}"
             )
+            for player in players
+        ]
+        self.set_output(f"{tournament_name} players", lines)
 
     def display_rounds(self, rounds):
         """Display tournament rounds and matches."""
-        print("\n=== Rounds report ===")
-
         if not rounds:
-            print("No rounds registered.")
+            self.set_output("Rounds report", ["No rounds registered."])
             return
 
+        lines = []
+
         for round_ in rounds:
-            print(f"\n{round_.name}")
-            print(f"Start: {round_.start_datetime}")
-            print(f"End: {round_.end_datetime}")
+            if lines:
+                lines.append("")
+
+            lines.extend(
+                [
+                    round_.name,
+                    f"Start: {round_.start_datetime}",
+                    f"End: {round_.end_datetime}",
+                ]
+            )
 
             for match in round_.matches:
-                print(
+                lines.append(
                     f"{match.player_one.last_name} {match.player_one.first_name} "
                     f"({match.score_one}) - "
                     f"{match.player_two.last_name} {match.player_two.first_name} "
                     f"({match.score_two})"
                 )
 
+        self.set_output("Rounds report", lines)
+
     def display_ranking(self, ranking):
         """Display a tournament ranking."""
-        print("\n=== Tournament ranking ===")
-
         if not ranking:
-            print("No players registered.")
+            self.set_output("Tournament ranking", ["No players registered."])
             return
+
+        lines = []
 
         for position, item in enumerate(ranking, start=1):
             player, score = item
-            print(
+            lines.append(
                 f"{position}. {player.last_name} {player.first_name} "
                 f"- {score} points"
             )
+
+        self.set_output("Tournament ranking", lines)
