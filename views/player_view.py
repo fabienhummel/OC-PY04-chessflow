@@ -48,6 +48,10 @@ class PlayerView:
         for line in lines:
             print(line)
 
+    def display_message(self, message, title="Players"):
+        """Display a message in the player output area."""
+        self.set_output(title, [message])
+
     def get_player_data(self):
         """Get player data from the user."""
         print("\nAdd a player")
