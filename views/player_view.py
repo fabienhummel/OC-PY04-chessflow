@@ -54,7 +54,7 @@ class PlayerView:
         last_name = input("Last name: ")
         first_name = input("First name: ")
         birth_date = input("Birth date (YYYY-MM-DD): ")
-        national_id = input("National chess ID: ")
+        national_id = input("National chess ID (AA12345): ")
 
         return last_name, first_name, birth_date, national_id
 
@@ -69,7 +69,9 @@ class PlayerView:
         last_name = input(f"Last name [{player.last_name}]: ")
         first_name = input(f"First name [{player.first_name}]: ")
         birth_date = input(f"Birth date [{player.birth_date}]: ")
-        national_id = input(f"National chess ID [{player.national_id}]: ")
+        national_id = input(
+            f"National chess ID (AA12345) [{player.national_id}]: "
+        )
 
         if not last_name:
             last_name = player.last_name
