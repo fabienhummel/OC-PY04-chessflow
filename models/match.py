@@ -6,9 +6,6 @@ class Match:
 
     def __init__(self, player_one, player_two):
         """Initialize a match."""
-        if player_one.national_id == player_two.national_id:
-            raise ValueError("A match must contain two different players.")
-
         self.pair = (
             [player_one, None],
             [player_two, None],
@@ -36,9 +33,6 @@ class Match:
 
     def set_result(self, score_one, score_two):
         """Set the result of the match."""
-        if (score_one, score_two) not in ((1, 0), (0, 1), (0.5, 0.5)):
-            raise ValueError("Valid results are 1-0, 0-1 or 0.5-0.5.")
-
         self.pair[0][1] = score_one
         self.pair[1][1] = score_two
 

@@ -1,5 +1,3 @@
-from datetime import date
-
 from models.player import Player
 from models.round import Round
 
@@ -17,59 +15,15 @@ class Tournament:
         number_of_rounds=4,
     ):
         """Initialize a tournament."""
-        self.name = self.validate_required_text(name, "Tournament name")
-        self.location = self.validate_required_text(location, "Location")
-        self.start_date = self.validate_date(start_date, "Start date")
-        self.end_date = self.validate_date(end_date, "End date")
-
-        if date.fromisoformat(self.end_date) < date.fromisoformat(self.start_date):
-            raise ValueError("End date cannot be earlier than start date.")
-
+        self.name = name
+        self.location = location
+        self.start_date = start_date
+        self.end_date = end_date
         self.description = description
-        self.number_of_rounds = self.validate_number_of_rounds(number_of_rounds)
+        self.number_of_rounds = number_of_rounds
         self.current_round = 0
         self.players = []
         self.rounds = []
-
-    @staticmethod
-    def validate_required_text(value, field_name):
-        """Validate and normalize required tournament text."""
-        normalized_value = value.strip()
-
-        if not normalized_value:
-            raise ValueError(f"{field_name} is required.")
-
-        return normalized_value
-
-    @staticmethod
-    def validate_date(value, field_name):
-        """Validate and normalize a tournament date."""
-        normalized_date = value.strip()
-
-        if not normalized_date:
-            raise ValueError(f"{field_name} is required.")
-
-        try:
-            date.fromisoformat(normalized_date)
-        except ValueError:
-            raise ValueError(
-                f"{field_name} must be a valid date in YYYY-MM-DD format."
-            ) from None
-
-        return normalized_date
-
-    @staticmethod
-    def validate_number_of_rounds(number_of_rounds):
-        """Validate the tournament number of rounds."""
-        try:
-            number_of_rounds = int(number_of_rounds)
-        except (TypeError, ValueError):
-            raise ValueError("Number of rounds must be a positive integer.") from None
-
-        if number_of_rounds <= 0:
-            raise ValueError("Number of rounds must be a positive integer.")
-
-        return number_of_rounds
 
     def add_player(self, player):
         """Add a player to the tournament."""

@@ -2,7 +2,7 @@
 
 ChessFlow est une application Python hors ligne destinée à la gestion de tournois d’échecs en ligne de commande.
 
-L’application utilise une architecture MVC et des fichiers JSON locaux pour conserver les joueurs et les tournois entre deux exécutions.
+L’application utilise une architecture MVC légère et des fichiers JSON locaux pour conserver les joueurs et les tournois entre deux exécutions.
 
 ## Prérequis
 
@@ -82,6 +82,8 @@ Exécuter tous les tests depuis la racine du projet :
 python -m unittest discover -v
 ```
 
+La version actuelle comporte 72 tests automatisés passants.
+
 ## Qualité du code
 
 Vérifier le code avec Flake8 :
@@ -92,7 +94,7 @@ flake8 .
 
 La configuration du projet fixe la longueur maximale à 119 caractères par ligne.
 
-Générer le rapport HTML Flake8 :
+Générer ou mettre à jour le rapport HTML Flake8 :
 
 ```bash
 flake8 --format=html --htmldir=flake8_rapport .
@@ -104,20 +106,24 @@ Le rapport est disponible dans :
 flake8_rapport/index.html
 ```
 
-Le rapport fourni dans le dépôt ne contient aucune erreur Flake8.
-
 ## Structure du projet
 
 ```text
 OC-PY04-chessflow/
 ├── controllers/
+│   ├── application_controller.py
+│   ├── match_controller.py
+│   ├── player_controller.py
+│   ├── round_controller.py
+│   └── tournament_controller.py
 ├── data/
 │   └── tournaments/
 ├── documentation/
 ├── flake8_rapport/
 ├── models/
+├── persistence/
+│   └── json_repository.py
 ├── tests/
-├── utils/
 ├── views/
 ├── .flake8
 ├── .gitignore
@@ -126,13 +132,14 @@ OC-PY04-chessflow/
 └── requirements.txt
 ```
 
-- `models/` contient les objets métier et leurs règles ;
+- `models/` contient les objets métier, leurs données, leurs comportements simples et leur sérialisation ;
 - `views/` gère l’affichage console et les saisies utilisateur ;
-- `controllers/` coordonne les vues, les modèles et la persistance ;
-- `utils/` contient la gestion de la persistance JSON ;
+- `controllers/` porte les validations, les règles applicatives et la coordination ;
+- `persistence/` centralise les lectures et écritures JSON ainsi que les accès aux fichiers de données ;
+- `ApplicationController` relie les vues aux contrôleurs spécialisés et pilote les menus ;
 - `tests/` contient les tests automatisés ;
 - `flake8_rapport/` contient le rapport HTML de qualité ;
-- `main.py` est le point d’entrée de l’application.
+- `main.py` est le point d’entrée minimal de l’application.
 
 ## Désactivation de l’environnement virtuel
 

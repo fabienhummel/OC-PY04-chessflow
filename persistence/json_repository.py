@@ -45,6 +45,18 @@ def save_players(players):
         json.dump(data, file, indent=4, ensure_ascii=False)
 
 
+def list_tournament_files():
+    """List saved tournament files."""
+    if not TOURNAMENTS_FOLDER.exists():
+        return []
+
+    return sorted(
+        path.name
+        for path in TOURNAMENTS_FOLDER.iterdir()
+        if path.is_file() and path.suffix == ".json"
+    )
+
+
 def load_tournament(filename):
     """Load one tournament."""
     path = TOURNAMENTS_FOLDER / filename
