@@ -62,10 +62,22 @@ L’application permet notamment de :
 - créer et consulter le registre des joueurs ;
 - créer et reprendre des tournois ;
 - sélectionner les participants ;
+- ajouter ou retirer un participant tant que la première ronde n’a pas commencé ;
 - créer les rondes et les matchs ;
 - saisir ou modifier les résultats ;
 - consulter les classements et les rapports ;
 - retrouver les données après redémarrage grâce à la persistance JSON.
+
+### Interface console
+
+L’interface est organisée comme un écran plutôt que comme un historique de lignes dans le terminal :
+
+- le menu courant reste visible dans la partie supérieure ;
+- la zone `OUTPUT` affiche uniquement le résultat ou le message associé à l’action courante ;
+- le tournoi chargé est affiché dans l’en-tête dans toute l’application ;
+- lorsqu’une ronde est ouverte, son nom est également affiché dans l’en-tête ;
+- les erreurs et confirmations sont affichées dans la zone `OUTPUT` au lieu de s’accumuler dans le terminal ;
+- `0` permet de revenir au menu précédent dans les sous-menus.
 
 Les données locales sont enregistrées dans :
 
@@ -82,7 +94,7 @@ Exécuter tous les tests depuis la racine du projet :
 python -m unittest discover -v
 ```
 
-La version actuelle comporte 72 tests automatisés passants.
+La version actuelle comporte 75 tests automatisés passants.
 
 ## Qualité du code
 
@@ -125,6 +137,7 @@ OC-PY04-chessflow/
 │   └── json_repository.py
 ├── tests/
 ├── views/
+│   └── console_screen.py
 ├── .flake8
 ├── .gitignore
 ├── main.py
@@ -134,9 +147,10 @@ OC-PY04-chessflow/
 
 - `models/` contient les objets métier, leurs données, leurs comportements simples et leur sérialisation ;
 - `views/` gère l’affichage console et les saisies utilisateur ;
+- `views/console_screen.py` centralise le rendu des écrans, de l’en-tête de contexte et de la zone `OUTPUT` ;
 - `controllers/` porte les validations, les règles applicatives et la coordination ;
 - `persistence/` centralise les lectures et écritures JSON ainsi que les accès aux fichiers de données ;
-- `ApplicationController` relie les vues aux contrôleurs spécialisés et pilote les menus ;
+- `ApplicationController` relie les vues aux contrôleurs spécialisés, pilote les menus et fournit le contexte d’affichage global ;
 - `tests/` contient les tests automatisés ;
 - `flake8_rapport/` contient le rapport HTML de qualité ;
 - `main.py` est le point d’entrée minimal de l’application.
