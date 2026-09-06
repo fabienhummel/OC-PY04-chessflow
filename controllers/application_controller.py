@@ -181,7 +181,7 @@ class ApplicationController:
                 ranking = self.round_controller.get_ranking_with_scores(
                     self.current_tournament
                 )
-                self.report_view.display_ranking(ranking)
+                self.tournament_view.display_ranking(ranking)
             elif choice == "0":
                 break
             else:
