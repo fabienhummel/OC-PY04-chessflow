@@ -166,6 +166,23 @@ class TournamentView:
         ]
         self.set_output("Tournament players", lines)
 
+    def display_ranking(self, ranking):
+        """Display the loaded tournament ranking in the current output area."""
+        if not ranking:
+            self.set_output("Tournament ranking", ["No players registered."])
+            return
+
+        lines = []
+
+        for position, item in enumerate(ranking, start=1):
+            player, score = item
+            lines.append(
+                f"{position}. {player.last_name} {player.first_name} "
+                f"- {score} points"
+            )
+
+        self.set_output("Tournament ranking", lines)
+
     def get_filename(self):
         """Get a tournament filename."""
         return input("Tournament filename: ")
