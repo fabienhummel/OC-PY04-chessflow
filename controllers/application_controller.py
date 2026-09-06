@@ -229,6 +229,28 @@ class ApplicationController:
                     ),
                     "Tournament players",
                 )
+            elif choice == "3":
+                national_id = self.tournament_view.get_player_national_id()
+
+                try:
+                    player = self.tournament_controller.remove_player(
+                        self.current_tournament,
+                        national_id,
+                    )
+                except ValueError as error:
+                    self.tournament_view.display_message(
+                        str(error),
+                        "Tournament players",
+                    )
+                    continue
+
+                self.tournament_view.display_message(
+                    (
+                        f"{player.last_name} {player.first_name} "
+                        "removed from tournament."
+                    ),
+                    "Tournament players",
+                )
             elif choice == "0":
                 break
             else:
