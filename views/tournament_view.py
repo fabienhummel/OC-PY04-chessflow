@@ -102,6 +102,10 @@ class TournamentView:
         for line in lines:
             print(line)
 
+    def display_message(self, message, title="Message"):
+        """Display a message in the current output area."""
+        self.set_output(title, [message])
+
     def get_tournament_data(self):
         """Get tournament data from the user."""
         print("\nCreate a tournament")
