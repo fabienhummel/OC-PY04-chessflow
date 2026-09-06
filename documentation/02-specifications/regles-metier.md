@@ -13,6 +13,8 @@
 - Une modification réutilise les mêmes validations que la création.
 - La suppression du registre général ne modifie pas les participants déjà enregistrés dans les fichiers de tournois.
 
+Les validations de création et de modification sont appliquées par `PlayerController` avant mise à jour du modèle `Player`.
+
 ## Tournois
 
 - Un tournoi possède un nom, un lieu, des dates, une description et un nombre de rondes.
@@ -27,11 +29,13 @@
 - Un tournoi n'a pas de statut persisté distinct : son avancement est représenté par `current_round` et ses rondes.
 - Lorsque la dernière ronde prévue est clôturée, aucune nouvelle ronde ne peut être créée.
 
+Les validations des informations du tournoi et des inscriptions sont appliquées par `TournamentController`.
+
 ## Rondes
 
 - Les rondes sont créées progressivement, et non lors de la création du tournoi.
 - Leur nom suit la séquence `Round 1`, `Round 2`, etc.
-- La date et l'heure de début sont enregistrées lors de la création par le contrôleur de tournoi.
+- La date et l'heure de début sont enregistrées lors de la création par `RoundController`.
 - Une seule ronde peut être en cours dans un tournoi.
 - Une nouvelle ronde ne peut être créée tant que la précédente n'est pas clôturée.
 - Une ronde ne peut être clôturée que lorsque tous ses matchs possèdent un résultat.
@@ -39,11 +43,12 @@
 
 ## Matchs et scores
 
-- Un match oppose exactement deux participants distincts.
+- Un match oppose exactement deux participants distincts dans le flux normal de génération des appariements.
 - La représentation interne d'un match est un tuple contenant deux listes mutables : `([joueur1, score1], [joueur2, score2])`.
 - Les propriétés `player_one`, `player_two`, `score_one` et `score_two` exposent les éléments de cette structure.
 - Les seuls résultats valides sont `1 / 0`, `0 / 1` et `0,5 / 0,5`.
 - Un résultat peut être saisi puis modifié.
+- La validation et la normalisation des scores sont effectuées par `MatchController`.
 - Le score cumulé d'un participant est calculé en parcourant les matchs du tournoi.
 - Aucun score cumulé n'est stocké dans l'objet `Player` ni dans un dictionnaire séparé du tournoi.
 - Les coups joués et la couleur des pièces ne sont pas persistés.
@@ -57,6 +62,7 @@
 - Si aucun adversaire inédit n'est disponible, le premier adversaire restant est utilisé.
 - Une ronde complète reste prioritaire sur l'évitement absolu des répétitions.
 - Chaque participant apparaît exactement une fois dans une ronde générée.
+- Les appariements, les scores cumulés et le classement sont gérés par `RoundController`.
 
 ## Persistance
 
@@ -69,6 +75,7 @@
 - Un fichier joueur absent correspond à une collection vide.
 - Un fichier JSON vide, invalide ou de structure incorrecte produit une erreur explicite.
 - Si le registre des joueurs ne peut pas être chargé, les écritures sur ce registre sont bloquées afin d'éviter d'écraser les données existantes.
+- Les accès aux fichiers JSON sont centralisés dans `persistence/json_repository.py`.
 
 ## Invariants
 
@@ -79,7 +86,7 @@
 5. Un tournoi possède au maximum une ronde non clôturée.
 6. Une ronde de N participants contient exactement N/2 matchs.
 7. Chaque participant apparaît exactement une fois dans une ronde générée.
-8. Les deux joueurs d'un match sont distincts.
+8. Les deux participants d'un match généré sont distincts.
 9. Un résultat est uniquement `1/0`, `0/1` ou `0,5/0,5`.
 10. Le score cumulé correspond à la somme des résultats enregistrés dans le tournoi.
 11. Un score de tournoi ne modifie jamais le registre général des joueurs.
@@ -90,11 +97,11 @@
 
 | Classe | Responsabilité | Relation principale |
 | --- | --- | --- |
-| `Player` | Identité et validation d'un joueur | Existe indépendamment des tournois |
+| `Player` | Identité d'un joueur et sérialisation | Existe indépendamment des tournois |
 | `Tournament` | Informations, participants, rondes et avancement | Agrège des joueurs et contient des rondes |
 | `Round` | Étape du tournoi et collection de matchs | Appartient au tournoi |
-| `Match` | Paire de joueurs et résultat | Appartient à une ronde et référence deux joueurs |
+| `Match` | Paire de joueurs, scores et sérialisation | Appartient à une ronde et référence deux joueurs |
 
-Le calcul des scores, le classement, les appariements, la sauvegarde et les règles de progression sont orchestrés par les contrôleurs.
+Les validations, le calcul des scores, le classement, les appariements, la sauvegarde et les règles de progression sont répartis entre les contrôleurs spécialisés.
 
 Aucun héritage ni aucune classe abstraite ne sont nécessaires dans le périmètre actuel.
