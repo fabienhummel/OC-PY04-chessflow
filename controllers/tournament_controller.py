@@ -135,3 +135,20 @@ class TournamentController:
 
         tournament.add_player(player)
         save_tournament(tournament, f"{tournament.name}.json")
+
+    def remove_player(self, tournament, national_id):
+        """Remove a player from a tournament before the first round starts."""
+        if not self.can_add_player(tournament):
+            raise ValueError(
+                "Players cannot be removed after the first round has started."
+            )
+
+        national_id = national_id.strip().upper()
+
+        for existing_player in tournament.players:
+            if existing_player.national_id == national_id:
+                tournament.players.remove(existing_player)
+                save_tournament(tournament, f"{tournament.name}.json")
+                return existing_player
+
+        raise ValueError("This player is not registered in the tournament.")
