@@ -165,6 +165,36 @@ class TournamentView:
         ]
         self.set_output("Tournament players", lines)
 
+    def display_rounds(self, rounds):
+        """Display rounds and matches in the current output area."""
+        if not rounds:
+            self.set_output("Rounds", ["No rounds registered."])
+            return
+
+        lines = []
+
+        for round_ in rounds:
+            if lines:
+                lines.append("")
+
+            lines.extend(
+                [
+                    round_.name,
+                    f"Start: {round_.start_datetime}",
+                    f"End: {round_.end_datetime}",
+                ]
+            )
+
+            for match in round_.matches:
+                lines.append(
+                    f"{match.player_one.last_name} {match.player_one.first_name} "
+                    f"({match.score_one}) - "
+                    f"{match.player_two.last_name} {match.player_two.first_name} "
+                    f"({match.score_two})"
+                )
+
+        self.set_output("Rounds", lines)
+
     def get_filename(self):
         """Get a tournament filename."""
         return input("Tournament filename: ")
@@ -186,7 +216,7 @@ class TournamentView:
         """Get the round to edit."""
         return input("Choose a round: ")
 
-    def display_matches(self, round_):
+    def display_matches(self, round_, message=None):
         """Display the matches of a round."""
         lines = []
 
@@ -199,6 +229,10 @@ class TournamentView:
             )
 
         lines.append("0. Back")
+
+        if message:
+            lines.extend(["", message])
+
         self.set_output(f"{round_.name} matches", lines)
 
     def get_match_choice(self):
