@@ -53,6 +53,18 @@ class ReportView:
         """Display a message in the report output area."""
         self.set_output(title, [message])
 
+    def display_tournament_files(self, filenames):
+        """Display saved tournament filenames for report selection."""
+        if not filenames:
+            self.set_output("Select a tournament", ["No saved tournaments."])
+            return
+
+        self.set_output("Select a tournament", filenames)
+
+    def get_filename(self):
+        """Get a tournament filename for a report."""
+        return input("Tournament filename: ")
+
     def display_players(self, players):
         """Display players."""
         if not players:
