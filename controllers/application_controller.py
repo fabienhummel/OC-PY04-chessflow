@@ -2,6 +2,7 @@ from controllers.match_controller import MatchController
 from controllers.player_controller import PlayerController
 from controllers.round_controller import RoundController
 from controllers.tournament_controller import TournamentController
+from views.console_screen import ConsoleScreen
 from views.main_menu_view import MainMenuView
 from views.player_view import PlayerView
 from views.report_view import ReportView
@@ -23,12 +24,28 @@ class ApplicationController:
         self.report_view = ReportView()
         self.current_tournament = None
 
+    def update_screen_context(self):
+        """Update the tournament and open round shown on every screen."""
+        lines = []
+
+        if self.current_tournament is not None:
+            lines.append(f"Tournament: {self.current_tournament.name}")
+            open_round = self.round_controller.get_open_round(
+                self.current_tournament
+            )
+
+            if open_round is not None:
+                lines.append(f"Round: {open_round.name}")
+
+        ConsoleScreen.set_context(lines)
+
     def run(self):
         """Run the application."""
         if self.player_controller.load_error is not None:
             print(self.player_controller.load_error)
 
         while True:
+            self.update_screen_context()
             self.main_menu_view.display_menu()
             choice = self.main_menu_view.get_choice()
 
@@ -47,6 +64,7 @@ class ApplicationController:
     def manage_players(self):
         """Manage players."""
         while True:
+            self.update_screen_context()
             self.player_view.display_menu()
             choice = self.player_view.get_choice()
 
@@ -100,6 +118,7 @@ class ApplicationController:
     def manage_tournaments(self):
         """Manage tournaments."""
         while True:
+            self.update_screen_context()
             self.tournament_view.display_menu()
             choice = self.tournament_view.get_choice()
 
@@ -148,6 +167,7 @@ class ApplicationController:
     def manage_loaded_tournament(self):
         """Manage a loaded tournament."""
         while True:
+            self.update_screen_context()
             self.tournament_view.display_loaded_menu()
             choice = self.tournament_view.get_choice()
 
@@ -170,6 +190,7 @@ class ApplicationController:
     def manage_tournament_players(self):
         """Manage players in the loaded tournament."""
         while True:
+            self.update_screen_context()
             self.tournament_view.display_players_menu()
             choice = self.tournament_view.get_choice()
 
@@ -204,6 +225,7 @@ class ApplicationController:
     def manage_rounds(self):
         """Manage rounds in the loaded tournament."""
         while True:
+            self.update_screen_context()
             self.tournament_view.display_rounds_menu()
             choice = self.tournament_view.get_choice()
 
@@ -321,6 +343,7 @@ class ApplicationController:
     def display_reports(self):
         """Display the reports menu."""
         while True:
+            self.update_screen_context()
             self.report_view.display_menu()
             choice = self.report_view.get_choice()
 
