@@ -1,46 +1,110 @@
+from views.console_screen import ConsoleScreen
+
+
 class TournamentView:
     """Display tournament-related information."""
 
+    MENU_LINES = [
+        "1. Create a tournament",
+        "2. List saved tournaments",
+        "3. Load a tournament",
+        "0. Back",
+    ]
+
+    LOADED_MENU_LINES = [
+        "1. Display tournament",
+        "2. Manage tournament players",
+        "3. Manage rounds",
+        "4. Display ranking",
+        "0. Back",
+    ]
+
+    PLAYERS_MENU_LINES = [
+        "1. List tournament players",
+        "2. Add a player",
+        "0. Back",
+    ]
+
+    ROUNDS_MENU_LINES = [
+        "1. List rounds",
+        "2. Create next round",
+        "3. Enter or edit round results",
+        "4. Close current round",
+        "0. Back",
+    ]
+
+    def __init__(self):
+        """Initialize the tournament output area."""
+        self.output_lines = []
+        self.screen_active = False
+        self.current_title = None
+        self.current_menu_lines = []
+
+    def render_menu(self, title, menu_lines):
+        """Render a tournament menu and its current output."""
+        if self.current_title != title:
+            self.output_lines = []
+
+        self.current_title = title
+        self.current_menu_lines = menu_lines
+        self.screen_active = True
+        self.render_current_screen()
+
+    def render_current_screen(self):
+        """Render the currently active tournament screen."""
+        ConsoleScreen.render(
+            self.current_title,
+            self.current_menu_lines,
+            self.output_lines,
+        )
+
     def display_menu(self):
         """Display the tournament menu."""
-        print("\n=== Manage tournaments ===")
-        print("1. Create a tournament")
-        print("2. List saved tournaments")
-        print("3. Load a tournament")
-        print("0. Back")
+        self.render_menu("ChessFlow > Tournaments", self.MENU_LINES)
 
     def display_loaded_menu(self):
         """Display the loaded tournament menu."""
-        print("\n=== Loaded tournament ===")
-        print("1. Display tournament")
-        print("2. Manage tournament players")
-        print("3. Manage rounds")
-        print("4. Display ranking")
-        print("0. Back")
+        self.render_menu("ChessFlow > Tournament", self.LOADED_MENU_LINES)
 
     def display_players_menu(self):
         """Display the tournament players menu."""
-        print("\n=== Manage tournament players ===")
-        print("1. List tournament players")
-        print("2. Add a player")
-        print("0. Back")
+        self.render_menu(
+            "ChessFlow > Tournament > Players",
+            self.PLAYERS_MENU_LINES,
+        )
 
     def display_rounds_menu(self):
         """Display the tournament rounds menu."""
-        print("\n=== Manage rounds ===")
-        print("1. List rounds")
-        print("2. Create next round")
-        print("3. Enter or edit round results")
-        print("4. Close current round")
-        print("0. Back")
+        self.render_menu(
+            "ChessFlow > Tournament > Rounds",
+            self.ROUNDS_MENU_LINES,
+        )
 
     def get_choice(self):
         """Get the user choice."""
-        return input("Choose an option: ")
+        choice = input("Choose an option: ")
+
+        if choice == "0":
+            self.output_lines = []
+            self.screen_active = False
+            ConsoleScreen.clear()
+
+        return choice
+
+    def set_output(self, title, lines):
+        """Store tournament lines for the screen or display them directly."""
+        if self.screen_active:
+            self.output_lines = [title, "", *lines]
+            self.render_current_screen()
+            return
+
+        print(f"\n=== {title} ===")
+        for line in lines:
+            print(line)
 
     def get_tournament_data(self):
         """Get tournament data from the user."""
-        print("\n=== Create a tournament ===")
+        print("\nCreate a tournament")
         name = input("Name: ")
         location = input("Location: ")
         start_date = input("Start date (YYYY-MM-DD): ")
@@ -60,28 +124,27 @@ class TournamentView:
     def display_tournament(self, tournament):
         """Display a tournament."""
         if tournament is None:
-            print("No tournament loaded.")
+            self.set_output("Tournament", ["No tournament loaded."])
             return
 
-        print("\n=== Tournament ===")
-        print(f"Name: {tournament.name}")
-        print(f"Location: {tournament.location}")
-        print(f"Start date: {tournament.start_date}")
-        print(f"End date: {tournament.end_date}")
-        print(f"Description: {tournament.description}")
-        print(f"Rounds: {tournament.current_round}/{tournament.number_of_rounds}")
-        print(f"Players: {len(tournament.players)}")
+        lines = [
+            f"Name: {tournament.name}",
+            f"Location: {tournament.location}",
+            f"Start date: {tournament.start_date}",
+            f"End date: {tournament.end_date}",
+            f"Description: {tournament.description}",
+            f"Rounds: {tournament.current_round}/{tournament.number_of_rounds}",
+            f"Players: {len(tournament.players)}",
+        ]
+        self.set_output("Tournament", lines)
 
     def display_tournament_files(self, filenames):
         """Display saved tournament files."""
-        print("\n=== Saved tournaments ===")
-
         if not filenames:
-            print("No saved tournaments.")
+            self.set_output("Saved tournaments", ["No saved tournaments."])
             return
 
-        for filename in filenames:
-            print(filename)
+        self.set_output("Saved tournaments", filenames)
 
     def get_filename(self):
         """Get a tournament filename."""
@@ -89,16 +152,16 @@ class TournamentView:
 
     def get_player_national_id(self):
         """Get a player national ID."""
-        return input("Player national chess ID: ")
+        return input("Player national chess ID (AA12345): ")
 
     def display_round_choices(self, rounds):
         """Display rounds that can be selected."""
-        print("\n=== Select a round ===")
-
-        for index, round_ in enumerate(rounds, start=1):
-            print(f"{index}. {round_.name}")
-
-        print("0. Back")
+        lines = [
+            f"{index}. {round_.name}"
+            for index, round_ in enumerate(rounds, start=1)
+        ]
+        lines.append("0. Back")
+        self.set_output("Select a round", lines)
 
     def get_round_choice(self):
         """Get the round to edit."""
@@ -106,17 +169,18 @@ class TournamentView:
 
     def display_matches(self, round_):
         """Display the matches of a round."""
-        print(f"\n=== {round_.name} matches ===")
+        lines = []
 
         for index, match in enumerate(round_.matches, start=1):
-            print(
+            lines.append(
                 f"{index}. {match.player_one.last_name} "
                 f"{match.player_one.first_name} ({match.score_one}) - "
                 f"{match.player_two.last_name} "
                 f"{match.player_two.first_name} ({match.score_two})"
             )
 
-        print("0. Back")
+        lines.append("0. Back")
+        self.set_output(f"{round_.name} matches", lines)
 
     def get_match_choice(self):
         """Get the match to edit."""
