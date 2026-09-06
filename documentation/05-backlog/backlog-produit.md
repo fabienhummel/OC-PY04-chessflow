@@ -10,12 +10,12 @@ Ce backlog conserve la logique de réalisation du projet tout en reflétant les 
 
 | ID | User story | Critères d'acceptation synthétiques | Priorité | Points | Lot | État |
 | --- | --- | --- | --- | --- | --- | --- |
-| US-01 | En tant qu'organisateur, je veux naviguer dans des menus clairs afin d'accéder aux fonctions sans interrompre l'application. | Joueurs, tournois et rapports accessibles ; `0` permet de revenir dans les sous-menus ; saisies invalides gérées. | Must | 5 | MVC et navigation | Livré |
+| US-01 | En tant qu'organisateur, je veux naviguer dans des menus clairs afin d'accéder aux fonctions sans interrompre l'application. | Joueurs, tournois et rapports accessibles ; `0` permet de revenir dans les sous-menus ; menu courant conservé ; zone `OUTPUT` dédiée ; tournoi et ronde courants visibles dans l'en-tête ; saisies invalides gérées. | Must | 5 | MVC et navigation | Livré |
 | US-02 | En tant qu'organisateur, je veux ajouter un joueur afin de l'inscrire ensuite à un tournoi. | Champs obligatoires ; date valide ; identifiant au format attendu, unique et non généré ; persistance immédiate. | Must | 5 | Joueurs et données | Livré |
 | US-03 | En tant qu'organisateur, je veux consulter et rechercher le registre afin de retrouver facilement un joueur. | Tri par nom puis prénom ; identifiant visible ; recherche par identifiant ; registre vide géré. | Must | 3 | Joueurs et données | Livré |
 | US-04 | En tant qu'organisateur, je veux modifier ou supprimer un joueur afin de maintenir le registre général. | Modification revalidée ; unicité préservée ; suppression persistée. | Should | 5 | Joueurs et données | Livré |
 | US-05 | En tant qu'organisateur, je veux créer un tournoi afin d'enregistrer son cadre et son nombre de rondes. | Informations obligatoires validées ; dates cohérentes ; quatre rondes par défaut ; tournoi restauré après redémarrage. | Must | 5 | Gestion des tournois | Livré |
-| US-06 | En tant qu'organisateur, je veux sélectionner les participants depuis le registre afin de constituer un tournoi cohérent. | Aucun doublon ; ajout uniquement avant `Round 1` ; ronde refusée si le nombre est impair ou insuffisant. | Must | 5 | Joueurs et données | Livré |
+| US-06 | En tant qu'organisateur, je veux sélectionner les participants depuis le registre afin de constituer un tournoi cohérent. | Aucun doublon ; ajout ou retrait uniquement avant `Round 1` ; ronde refusée si le nombre est impair ou insuffisant. | Must | 5 | Joueurs et données | Livré |
 | US-07 | En tant qu'organisateur, je veux charger un tournoi afin de poursuivre son déroulement exact. | Participants, ronde courante, rondes, matchs et résultats sont restaurés. | Must | 5 | Gestion des tournois | Livré |
 | US-08 | En tant qu'organisateur, je veux démarrer la première ronde afin d'obtenir une série complète de matchs aléatoires. | Nom et début automatiques ; joueurs mélangés ; N/2 matchs ; chaque joueur apparaît une fois ; une seule ronde active. | Must | 8 | Appariements | Livré |
 | US-09 | En tant qu'organisateur, je veux générer les rondes suivantes selon les scores afin d'obtenir des appariements pertinents. | Classement par score ; ordre stable à égalité ; revanches évitées si possible ; ronde complète. | Must | 8 | Appariements | Livré |
@@ -25,7 +25,7 @@ Ce backlog conserve la logique de réalisation du projet tout en reflétant les 
 | US-13 | En tant qu'organisateur, je veux consulter les tournois afin de suivre leur état. | Liste complète ; détail du tournoi ; avancement visible ; absence de données signalée. | Must | 3 | Rapports | Livré |
 | US-14 | En tant qu'organisateur, je veux consulter les participants d'un tournoi afin d'obtenir une liste alphabétique fiable. | Tous les participants sont triés par nom puis prénom. | Must | 2 | Rapports | Livré |
 | US-15 | En tant qu'organisateur, je veux consulter les rondes, matchs et classements afin d'obtenir l'historique du tournoi. | Rondes et horodatages ; deux joueurs et résultat par match ; classement avec scores calculés. | Must | 5 | Rapports | Livré |
-| US-16 | En tant que mainteneur, je veux une application contrôlée et documentée afin de pouvoir l'installer et la vérifier. | Tests passants ; MVC et POO contrôlés ; Flake8 sans erreur ; rapport HTML ; README et dépendances à jour. | Must | 8 | Finalisation | Livré |
+| US-16 | En tant que mainteneur, je veux une application contrôlée et documentée afin de pouvoir l'installer et la vérifier. | 75 tests passants ; MVC et POO contrôlés ; Flake8 sans erreur ; rapport HTML ; README et dépendances à jour. | Must | 8 | Finalisation | Livré |
 
 ## 3. Plan de réalisation
 
@@ -54,6 +54,10 @@ Ce backlog conserve la logique de réalisation du projet tout en reflétant les 
 ## 5. Fonctionnalités complémentaires livrées
 
 La recherche, la modification et la suppression des joueurs ne sont pas nécessaires au parcours minimal d'un tournoi, mais elles sont présentes dans la version finale afin de rendre le registre plus utilisable.
+
+La liste des participants d'un tournoi peut également être corrigée avant son démarrage : un participant peut être retiré tant qu'aucune ronde n'a été créée.
+
+L'interface console conserve le menu actif à l'écran et remplace uniquement la zone `OUTPUT`. Le tournoi chargé est visible dans toute l'application et la ronde ouverte est affichée tant qu'elle n'est pas clôturée.
 
 La modification d'un résultat déjà saisi est également disponible.
 
